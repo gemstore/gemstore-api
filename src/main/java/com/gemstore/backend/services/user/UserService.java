@@ -2,6 +2,7 @@ package com.gemstore.backend.services.user;
 
 import com.gemstore.backend.dtos.auth.ChangePasswordRequest;
 import com.gemstore.backend.dtos.user.UpdateProfileRequest;
+import com.gemstore.backend.dtos.user.UserResponse;
 import com.gemstore.backend.entities.user.User;
 import com.gemstore. backend.exceptions.UserNotFoundException;
 import com.gemstore.backend.mappers.user.UserMapper;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -202,5 +204,17 @@ public class UserService {
 
         user.setRole(normalized);
         return userRepository.save(user);
+    }
+
+    @Transactional
+    public UserResponse updateDateOfBirth(Long userId, LocalDate dob) {
+        User user = getById(userId);
+        user.setDateOfBirth(dob);
+
+        // Save the entity
+        User savedUser = userRepository.save(user);
+
+        // Map to DTO inside the service (Consistent with ListingService!)
+        return userMapper.toUserResponse(savedUser);
     }
 }

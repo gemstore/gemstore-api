@@ -6,6 +6,7 @@ import com.gemstore.backend.dtos.auth.AuthResponse;
 import com.gemstore.backend.dtos.auth.LoginRequest;
 import com.gemstore.backend.dtos.auth.RegisterUserRequest;
 import com.gemstore.backend.dtos.auth.VerifyOtpRequest;
+import com.gemstore.backend.dtos.user.CompleteProfileRequest;
 import com.gemstore.backend.dtos.user.UserResponse;
 import com.gemstore.backend.mappers.user.UserMapper;
 import com.gemstore.backend.security.CustomUserDetails;
@@ -92,4 +93,21 @@ public class AuthController {
         return ResponseEntity.ok("Email verified successfully");
     }
 
+    /**
+     * Updates the user's Date of Birth (used for Google OAuth onboarding)
+     */
+    @PatchMapping("/me/dob")
+    public ResponseEntity<UserResponse> updateDob(
+            @AuthenticationPrincipal CustomUserDetails principal,
+            @RequestBody @Valid CompleteProfileRequest request
+    ) {
+        // The service now handles the database update AND the DTO mapping
+        UserResponse response = userService.updateDateOfBirth(
+                principal.getId(),
+                request.getDateOfBirth()
+        );
+
+        // Return the DTO directly
+        return ResponseEntity.ok(response);
+    }
 }
