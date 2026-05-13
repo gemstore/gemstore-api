@@ -47,6 +47,7 @@ public class AuthService {
         user.setUsername(usernameNorm);
         user.setPasswordHash(passwordEncoder.encode(req.getPassword()));
         user.setDisplayName(displayNameNorm);
+        user.setDateOfBirth(req.getDateOfBirth());
 
         if (user.getRole() == null) {
             user.setRole("USER");
