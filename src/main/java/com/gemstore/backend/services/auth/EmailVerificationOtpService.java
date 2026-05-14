@@ -68,4 +68,19 @@ public class EmailVerificationOtpService {
 
         otpRepository.delete(entity);
     }
+
+    @Transactional
+    public void resendOtp(Long userId) {
+        // 1. Fetch user
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        // 2. Business rule: Check if already verified (use isEmailVerified!)
+        if (user.isEmailVerified()) {
+            throw new IllegalStateException("Email is already verified");
+        }
+
+        // 3. Delegate to your existing method
+        generateAndSendOtp(user);
+    }
 }

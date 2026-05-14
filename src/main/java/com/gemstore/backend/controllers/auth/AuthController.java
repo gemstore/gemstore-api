@@ -8,6 +8,7 @@ import com.gemstore.backend.dtos.auth.RegisterUserRequest;
 import com.gemstore.backend.dtos.auth.VerifyOtpRequest;
 import com.gemstore.backend.dtos.user.CompleteProfileRequest;
 import com.gemstore.backend.dtos.user.UserResponse;
+import com.gemstore.backend.entities.user.User;
 import com.gemstore.backend.mappers.user.UserMapper;
 import com.gemstore.backend.security.CustomUserDetails;
 import com.gemstore.backend.security.UserPrincipal;
@@ -109,5 +110,17 @@ public class AuthController {
 
         // Return the DTO directly
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Resend Email Verification OTP
+     */
+    @PostMapping("/resend-otp")
+    public ResponseEntity<?> resendOtp(@AuthenticationPrincipal CustomUserDetails principal) {
+
+        // The service now handles fetching the user and checking the verification rules
+        otpService.resendOtp(principal.getId());
+
+        return ResponseEntity.ok("OTP resent successfully");
     }
 }

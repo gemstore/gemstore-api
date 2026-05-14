@@ -63,6 +63,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/auth/login",
                                 "/api/auth/register",
+                                "/api/auth/password/forgot",
+                                "/api/auth/password/reset",
                                 "/oauth2/**",
                                 "/login/oauth2/**"
                         ).permitAll()

@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.List;
 
 @Slf4j
 @Component
@@ -32,6 +31,7 @@ public class JwtFilter extends OncePerRequestFilter {
         // Skip filter for auth endpoints
         return path.startsWith("/api/auth/login") ||
                 path.startsWith("/api/auth/register") ||
+                path.startsWith("/api/auth/password/") ||
                 path.startsWith("/oauth2") ||
                 path.startsWith("/login/oauth2");
     }
@@ -54,6 +54,14 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         String token = authHeader.substring(7);
+
+        // ✅ FIX 1: Ignore literal "null", "undefined", or empty strings sent by frontend JS
+        if (token.isBlank() || token.equals("null") || token.equals("undefined")) {
+            log.debug("[JWT Filter] Token is null/undefined string from client. Skipping.");
+            chain.doFilter(request, response);
+            return;
+        }
+
         log.debug("[JWT Filter] Token found: {}...", token.substring(0, Math.min(20, token.length())));
 
         try {
@@ -86,14 +94,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
                 if (userId == null) {
                     log.error("[JWT Filter] USER ID IS NULL! Token doesn't contain 'uid' claim");
-                    log.error("[JWT Filter] This will cause 'user is NULL' in controllers");
-                    log.error("[JWT Filter] Fix: Add .claim(\"uid\", userId) when generating token");
                     chain.doFilter(request, response);
                     return;
                 }
-
-                log.info("[JWT Filter] Creating CustomUserDetails - userId: {}, username: {}, role: {}",
-                        userId, username, role);
 
                 // Create CustomUserDetails directly from JWT claims
                 CustomUserDetails userDetails = new CustomUserDetails(
@@ -114,11 +117,10 @@ public class JwtFilter extends OncePerRequestFilter {
 
                 // Set authentication in SecurityContext
                 SecurityContextHolder.getContext().setAuthentication(authToken);
-
-                log.info("[JWT Filter] Authentication set successfully! User ID: {}", userId);
             }
         } catch (Exception e) {
-            log.error("[JWT Filter] Error during JWT authentication", e);
+            // ✅ FIX 2: Change log.error(..., e) to log.warn(...) so it doesn't print a 100-line stack trace!
+            log.warn("[JWT Filter] Error during JWT authentication: {}", e.getMessage());
         }
 
         chain.doFilter(request, response);

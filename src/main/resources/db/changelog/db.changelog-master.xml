@@ -159,4 +159,9 @@
         <sqlFile path="V27__create_OTP_table.sql" relativeToChangelogFile="true"/>
     </changeSet>
 
+    <!-- 28. create reset token table -->
+    <changeSet id="20251114162740-28" author="mnm-musharraf">
+        <sqlFile path="V28__create_reset_token.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+
 </databaseChangeLog>
