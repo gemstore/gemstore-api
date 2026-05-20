@@ -1,6 +1,7 @@
     package com.gemstore.backend.services.user;
 
     import com.gemstore.backend.dtos.auth.ChangePasswordRequest;
+    import com.gemstore.backend.dtos.user.CompleteProfileRequest;
     import com.gemstore.backend.dtos.user.UpdateProfileRequest;
     import com.gemstore.backend.dtos.user.UserResponse;
     import com.gemstore.backend.entities.user.User;
@@ -212,9 +213,10 @@
         }
 
         @Transactional
-        public UserResponse updateDateOfBirth(Long userId, LocalDate dob) {
+        public UserResponse completeProfile(Long userId, CompleteProfileRequest request) {
             User user = getById(userId);
-            user.setDateOfBirth(dob);
+            user.setDateOfBirth(request.getDateOfBirth());
+            user.setGender(request.getGender());
 
             // Save the entity
             User savedUser = userRepository.save(user);

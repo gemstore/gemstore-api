@@ -110,6 +110,9 @@ public class User {
 
     // ========== NEW PROFILE FIELDS ==========
 
+    @Column(length = 50)
+    private String gender; // e.g., "MALE", "FEMALE", "OTHER", "PREFER_NOT_TO_SAY"
+
     @Column(length = 500)
     private String website;
 

@@ -164,4 +164,9 @@
         <sqlFile path="V28__create_reset_token.sql" relativeToChangelogFile="true"/>
     </changeSet>
 
+    <!-- 29. add gender users table -->
+    <changeSet id="20251114162740-29" author="mnm-musharraf">
+        <sqlFile path="V29__add_gender_to_users_table.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+
 </databaseChangeLog>

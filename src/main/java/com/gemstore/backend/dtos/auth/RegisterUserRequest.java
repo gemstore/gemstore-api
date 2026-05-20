@@ -30,5 +30,8 @@ public class RegisterUserRequest {
     @Past(message = "Date of birth must be in the past")
     private LocalDate dateOfBirth;
 
+    @Size(max = 50, message = "Gender must not exceed 50 characters")
+    private String gender;
+
     // Optional future fields: locale, timezone
 }

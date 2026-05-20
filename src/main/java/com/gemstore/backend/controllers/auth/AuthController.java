@@ -98,14 +98,14 @@ public class AuthController {
      * Updates the user's Date of Birth (used for Google OAuth onboarding)
      */
     @PatchMapping("/me/dob")
-    public ResponseEntity<UserResponse> updateDob(
+    public ResponseEntity<UserResponse> completeProfile(
             @AuthenticationPrincipal CustomUserDetails principal,
             @RequestBody @Valid CompleteProfileRequest request
     ) {
         // The service now handles the database update AND the DTO mapping
-        UserResponse response = userService.updateDateOfBirth(
+        UserResponse response = userService.completeProfile(
                 principal.getId(),
-                request.getDateOfBirth()
+                request
         );
 
         // Return the DTO directly
