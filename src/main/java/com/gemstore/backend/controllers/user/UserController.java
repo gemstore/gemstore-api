@@ -42,6 +42,13 @@ public class UserController {
         );
     }
 
+    @GetMapping("/username/{username}")
+    public ResponseEntity<UserResponse> getByUsername(@PathVariable String username) {
+        return ResponseEntity.ok(
+                userMapper.toUserResponse(userService.findActiveByUsername(username))
+        );
+    }
+
     // ==================== /me ====================
 
     @GetMapping("/me")

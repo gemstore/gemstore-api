@@ -57,9 +57,9 @@
         /**
          * Find user by username.
          */
-        public User findByUsername(String username) {
-            return userRepository.findByUsername(username)
-                    .orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));
+        public User findActiveByUsername(String username) {
+            return userRepository.findActiveByUsername(username)
+                    .orElseThrow(() -> new UserNotFoundException("Active user not found with username: " + username));
         }
 
         /**

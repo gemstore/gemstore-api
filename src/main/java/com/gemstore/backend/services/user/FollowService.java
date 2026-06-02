@@ -1,8 +1,8 @@
 package com.gemstore.backend.services.user;
 
-import com.gemstore.backend. dtos.common.PageResponse;
-import com.gemstore.backend. dtos.user.UserSummaryResponse;
-import com.gemstore.backend.entities.user. Follow;
+import com.gemstore.backend.dtos.common.PageResponse;
+import com.gemstore.backend.dtos.user.UserSummaryResponse;
+import com.gemstore.backend.entities.user.Follow;
 import com.gemstore.backend.entities.user.User;
 import com.gemstore. backend.exceptions.BadRequestException;
 import com.gemstore.backend.exceptions.ResourceNotFoundException;

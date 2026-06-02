@@ -35,11 +35,11 @@ public interface ListingMapper {
     @Mapping(target = "gemstoneType", source = "gemstoneType.name")
     @Mapping(target = "caratWeight", source = "caratWeight")
     @Mapping(target = "color", source = "color.name")
-    @Mapping(target = "colorQuality", source = "colorQuality.name")  // ADD
-    @Mapping(target = "clarity", source = "clarity.name")            // ADD
-    @Mapping(target = "cut", source = "cut.name")                    // ADD
+    @Mapping(target = "colorQuality", source = "colorQuality.name")
+    @Mapping(target = "clarity", source = "clarity.name")
+    @Mapping(target = "cut", source = "cut.name")
     @Mapping(target = "origin", source = "origin.name")
-    @Mapping(target = "treatment", source = "treatment.name")        // ADD
+    @Mapping(target = "treatment", source = "treatment.name")
     @Mapping(target = "price", source = "price")
     @Mapping(target = "currency", source = "currency")
     @Mapping(target = "pricePerCarat", source = "pricePerCarat")
@@ -48,10 +48,11 @@ public interface ListingMapper {
     @Mapping(target = "favoritesCount", source = "favoritesCount")
     @Mapping(target = "status", source = "status")
     @Mapping(target = "isSold", source = "isSold")
-    @Mapping(target = "isCertified", source = "isCertified")         // ADD
+    @Mapping(target = "isCertified", source = "isCertified")
     @Mapping(target = "sellerId", source = "seller.id")
     @Mapping(target = "sellerName", source = "seller.displayName")
     @Mapping(target = "sellerAvatar", source = "seller.avatarUrl")
+    @Mapping(target = "sellerUsername", source = "seller.username")
     @Mapping(target = "createdAt", source = "createdAt")
     @Mapping(target = "isLiked", ignore = true)
     @Mapping(target = "isFavorited", ignore = true)
@@ -258,7 +259,7 @@ public interface ListingMapper {
     /**
      * Maps User to SellerInfo for ListingResponse.
      */
-    default ListingResponse. SellerInfo toSellerInfo(User seller) {
+    default ListingResponse.SellerInfo toSellerInfo(User seller) {
         if (seller == null) {
             return null;
         }
