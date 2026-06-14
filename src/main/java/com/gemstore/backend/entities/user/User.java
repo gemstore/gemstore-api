@@ -37,7 +37,7 @@ public class User {
     private Long id;
 
     // Display name (what you show in UI)
-    @Column(name = "display_name", length = 150)
+    @Column(name = "display_name", length = 150, nullable = false)
     private String displayName;
 
     @Column(name = "first_name", length = 100)

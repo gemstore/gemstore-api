@@ -4,20 +4,20 @@ import com.gemstore.backend.dtos.common.PageResponse;
 import com.gemstore.backend.dtos.user.UserSummaryResponse;
 import com.gemstore.backend.entities.user.Follow;
 import com.gemstore.backend.entities.user.User;
-import com.gemstore. backend.exceptions.BadRequestException;
+import com.gemstore.backend.exceptions.BadRequestException;
 import com.gemstore.backend.exceptions.ResourceNotFoundException;
-import com. gemstore.backend.mappers. user.FollowMapper;
-import com.gemstore.backend. repositories.user.FollowRepository;
-import com.gemstore. backend.repositories.user.UserRepository;
-import com.gemstore.backend.services. notification.NotificationService;
+import com.gemstore.backend.mappers.user.FollowMapper;
+import com.gemstore.backend.repositories.user.FollowRepository;
+import com.gemstore.backend.repositories.user.UserRepository;
+import com.gemstore.backend.services.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data. domain.Pageable;
 import org.springframework.data.domain. Sort;
-import org.springframework. stereotype.Service;
-import org. springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -62,9 +62,9 @@ public class FollowService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found:  " + followingId));
 
         // Determine status based on target user's privacy setting
-        String status = following. isPrivateProfile() ? STATUS_PENDING : STATUS_ACTIVE;
+        String status = following.isPrivateProfile() ? STATUS_PENDING : STATUS_ACTIVE;
 
-        Follow follow = Follow. builder()
+        Follow follow = Follow.builder()
                 .follower(follower)
                 .following(following)
                 .status(status)
@@ -147,7 +147,7 @@ public class FollowService {
         Follow follow = followRepository.findByFollowerIdAndFollowingId(followerId, userId)
                 .orElseThrow(() -> new BadRequestException("Follow request not found"));
 
-        if (! STATUS_PENDING.equals(follow. getStatus())) {
+        if (! STATUS_PENDING.equals(follow.getStatus())) {
             throw new BadRequestException("This is not a pending request");
         }
 
@@ -159,7 +159,7 @@ public class FollowService {
         User following = follow.getFollowing();
 
         follower.setFollowingCount(follower.getFollowingCount() + 1);
-        following. setFollowersCount(following. getFollowersCount() + 1);
+        following.setFollowersCount(following.getFollowersCount() + 1);
 
         userRepository.save(follower);
         userRepository.save(following);
@@ -244,7 +244,7 @@ public class FollowService {
      */
     @Transactional(readOnly = true)
     public PageResponse<UserSummaryResponse> getFollowing(Long userId, Long currentUserId, int page, int size) {
-        Pageable pageable = PageRequest. of(page, size, Sort. by(Sort.Direction.DESC, "createdAt"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<Follow> follows = followRepository.findByFollowerIdAndStatus(userId, STATUS_ACTIVE, pageable);
 
         return toPageResponse(follows, currentUserId, false);
@@ -255,7 +255,7 @@ public class FollowService {
      */
     @Transactional(readOnly = true)
     public PageResponse<UserSummaryResponse> getPendingRequests(Long userId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort. Direction.DESC, "createdAt"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<Follow> follows = followRepository.findByFollowingIdAndStatus(userId, STATUS_PENDING, pageable);
 
         return toPageResponse(follows, userId, true);
@@ -290,7 +290,7 @@ public class FollowService {
 
                     // Set isFollowing dynamically
                     User user = isFollowers ?  follow.getFollower() : follow.getFollowing();
-                    if (currentUserId != null && ! currentUserId.equals(user. getId())) {
+                    if (currentUserId != null && ! currentUserId.equals(user.getId())) {
                         response.setIsFollowing(isFollowing(currentUserId, user.getId()));
                     } else {
                         response.setIsFollowing(false);
