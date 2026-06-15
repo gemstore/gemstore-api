@@ -76,7 +76,10 @@ public class FollowController {
             @PathVariable Long userId,
             @AuthenticationPrincipal CustomUserDetails principal
     ) {
-        String status = followService. getFollowStatus(principal.getId(), userId);
+        if (principal == null) {
+            return ResponseEntity.ok(ApiResponse.success(new FollowStatusResponse("NONE")));
+        }
+        String status = followService.getFollowStatus(principal.getId(), userId);
         return ResponseEntity.ok(ApiResponse.success(new FollowStatusResponse(status)));
     }
 
@@ -90,7 +93,7 @@ public class FollowController {
             @PathVariable Long followerId,
             @AuthenticationPrincipal CustomUserDetails principal
     ) {
-        followService.acceptFollowRequest(principal. getId(), followerId);
+        followService.acceptFollowRequest(principal.getId(), followerId);
         return ResponseEntity.ok(ApiResponse.success("Follow request accepted", null));
     }
 

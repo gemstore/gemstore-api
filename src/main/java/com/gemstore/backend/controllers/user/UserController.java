@@ -38,14 +38,16 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getById(@PathVariable Long id) {
         return ResponseEntity.ok(
-                userMapper.toUserResponse(userService.getById(id))
+//                userMapper.toUserResponse(userService.getById(id))
+                userService.getUserResponseById(id)
         );
     }
 
     @GetMapping("/username/{username}")
     public ResponseEntity<UserResponse> getByUsername(@PathVariable String username) {
         return ResponseEntity.ok(
-                userMapper.toUserResponse(userService.findActiveByUsername(username))
+//                userMapper.toUserResponse(userService.findActiveByUsername(username))
+                userService.getUserResponseByUsername(username)
         );
     }
 
@@ -56,7 +58,8 @@ public class UserController {
             @AuthenticationPrincipal CustomUserDetails principal
     ) {
         return ResponseEntity.ok(
-                userMapper.toUserResponse(userService.getById(principal.getId()))
+//                userMapper.toUserResponse(userService.getById(principal.getId()))
+                userService.getUserResponseById(principal.getId())
         );
     }
 

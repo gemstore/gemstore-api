@@ -35,8 +35,36 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     // Used for:  active followers list, pending requests list
     Page<Follow> findByFollowingIdAndStatus(Long followingId, String status, Pageable pageable);
 
+    @Query("""
+    SELECT f FROM Follow f
+    WHERE f.following.id = :userId
+    AND f.status = :status
+    AND f.follower.deletedAt IS NULL
+    AND f.follower.status != 'BANNED'
+    AND f.follower.role != 'ADMIN'
+    """)
+    Page<Follow> findActiveFollowers(
+            @Param("userId") Long userId,
+            @Param("status") String status,
+            Pageable pageable
+    );
+
     // Get following of a user (people they follow) - filtered by status
-    Page<Follow> findByFollowerIdAndStatus(Long followerId, String status, Pageable pageable);
+//    Page<Follow> findByFollowerIdAndStatus(Long followerId, String status, Pageable pageable);
+
+    @Query("""
+    SELECT f FROM Follow f
+    WHERE f.follower.id = :userId
+    AND f.status = :status
+    AND f.following.deletedAt IS NULL
+    AND f.following.status != 'BANNED'
+    AND f.following.role != 'ADMIN'
+    """)
+    Page<Follow> findActiveFollowing(
+            @Param("userId") Long userId,
+            @Param("status") String status,
+            Pageable pageable
+    );
 
     // ==================== COUNT QUERIES ====================
 

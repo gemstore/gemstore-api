@@ -169,4 +169,18 @@
         <sqlFile path="V29__add_gender_to_users_table.sql" relativeToChangelogFile="true"/>
     </changeSet>
 
+    <!-- 30 Fix follower count trigger -->
+    <changeSet id="20251114162740-30" author="mnm-musharraf">
+        <sqlFile path="V30__fix_follower_count_trigger.sql"
+                 relativeToChangelogFile="true"
+                 splitStatements="false"
+                 endDelimiter="$$"
+        />
+    </changeSet>
+
+    <!-- 31. Repair drifted follower counts -->
+    <changeSet id="20251114162740-31" author="mnm-musharraf">
+        <sqlFile path="V31__repair_follower_counts.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+
 </databaseChangeLog>

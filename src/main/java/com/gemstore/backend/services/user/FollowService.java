@@ -234,7 +234,7 @@ public class FollowService {
     @Transactional(readOnly = true)
     public PageResponse<UserSummaryResponse> getFollowers(Long userId, Long currentUserId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<Follow> follows = followRepository.findByFollowingIdAndStatus(userId, STATUS_ACTIVE, pageable);
+        Page<Follow> follows = followRepository.findActiveFollowers(userId, STATUS_ACTIVE, pageable);
 
         return toPageResponse(follows, currentUserId, true);
     }
@@ -245,7 +245,7 @@ public class FollowService {
     @Transactional(readOnly = true)
     public PageResponse<UserSummaryResponse> getFollowing(Long userId, Long currentUserId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<Follow> follows = followRepository.findByFollowerIdAndStatus(userId, STATUS_ACTIVE, pageable);
+        Page<Follow> follows = followRepository.findActiveFollowing(userId, STATUS_ACTIVE, pageable);
 
         return toPageResponse(follows, currentUserId, false);
     }

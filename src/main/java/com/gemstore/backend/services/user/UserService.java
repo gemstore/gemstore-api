@@ -7,6 +7,7 @@
     import com.gemstore.backend.entities.user.User;
     import com.gemstore. backend.exceptions.UserNotFoundException;
     import com.gemstore.backend.mappers.user.UserMapper;
+    import com.gemstore.backend.repositories.user.FollowRepository;
     import com.gemstore.backend.repositories.user.UserRepository;
     import com.gemstore.backend.services.storage.FileStorageService;
     import jakarta. validation.Valid;
@@ -33,6 +34,7 @@
         private final FileStorageService fileStorageService;
         private final PasswordResetTokenRepository passwordResetTokenRepository;
         private final EmailService emailService;
+        private final FollowRepository followRepository;
 
         /**
          * Returns all users, excluding soft-deleted ones.
@@ -276,5 +278,29 @@
 
             // Delete token so it can't be used again
             passwordResetTokenRepository.delete(resetToken);
+        }
+
+        @Transactional(readOnly = true)
+        public UserResponse getUserResponseById(Long id) {
+            User user = getById(id);
+
+            UserResponse dto = userMapper.toUserResponse(user);
+
+            dto.setFollowersCount((int) followRepository.countByFollowingIdAndStatus(id, "ACTIVE"));
+            dto.setFollowingCount((int) followRepository.countByFollowerIdAndStatus(id, "ACTIVE"));
+
+            return dto;
+        }
+
+        @Transactional(readOnly = true)
+        public UserResponse getUserResponseByUsername(String username) {
+            User user = findActiveByUsername(username);
+
+            UserResponse dto = userMapper.toUserResponse(user);
+
+            dto.setFollowersCount((int) followRepository.countByFollowingIdAndStatus(user.getId(), "ACTIVE"));
+            dto.setFollowingCount((int) followRepository.countByFollowerIdAndStatus(user.getId(), "ACTIVE"));
+
+            return dto;
         }
     }
