@@ -18,6 +18,7 @@ public class ListingCardResponse {
 
     private Long id;
     private String listingNumber;
+    private String slug;
     private String title;
 
     // Images - ALL images for carousel

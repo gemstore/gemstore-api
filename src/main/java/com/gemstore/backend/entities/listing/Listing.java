@@ -20,7 +20,8 @@ import java.util.List;
         @Index(name = "idx_listings_type", columnList = "gemstone_type_id"),
         @Index(name = "idx_listings_price", columnList = "price"),
         @Index(name = "idx_listings_carat", columnList = "carat_weight"),
-        @Index(name = "idx_listings_created", columnList = "created_at DESC")
+        @Index(name = "idx_listings_created", columnList = "created_at DESC"),
+        @Index(name = "idx_listings_slug", columnList = "slug")
 })
 @Data
 @NoArgsConstructor
@@ -35,6 +36,9 @@ public class Listing {
     // Auto-generated
     @Column(name = "listing_number", unique = true, length = 20)
     private String listingNumber;
+
+    @Column(name = "slug" , unique = true, length = 12)
+    private String slug;
 
     // Seller
     @ManyToOne(fetch = FetchType.LAZY)

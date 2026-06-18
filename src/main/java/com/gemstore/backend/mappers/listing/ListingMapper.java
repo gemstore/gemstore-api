@@ -59,6 +59,7 @@ public interface ListingMapper {
     @Mapping(target = "lengthMm", source = "lengthMm")
     @Mapping(target = "widthMm", source = "widthMm")
     @Mapping(target = "depthMm", source = "depthMm")
+    @Mapping(target = "slug", source = "slug")
     ListingCardResponse toCardResponse(Listing entity);
 
     List<ListingCardResponse> toCardResponseList(List<Listing> entities);
@@ -99,6 +100,7 @@ public interface ListingMapper {
     @Mapping(target = "isFavorited", ignore = true)
     @Mapping(target = "likesCount", source = "likesCount")
     @Mapping(target = "isLiked", ignore = true)
+    @Mapping(target = "slug", source = "slug")
     ListingResponse toResponse(Listing entity);
 
     List<ListingResponse> toResponseList(List<Listing> entities);
@@ -141,6 +143,7 @@ public interface ListingMapper {
     @Mapping(target = "updatedAt", source = "updatedAt")
     @Mapping(target = "isFavorited", ignore = true)
     @Mapping(target = "isOwner", ignore = true)
+    @Mapping(target = "slug", source = "slug")
     ListingDetailResponse toDetailResponse(Listing entity);
 
     /* ===================== DTO -> Entity (Creation) ===================== */
@@ -178,6 +181,7 @@ public interface ListingMapper {
     @Mapping(target = "favorites", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "slug", ignore = true)
     Listing toEntity(CreateListingRequest request);
 
     /* ===================== Partial Update ===================== */
@@ -216,6 +220,7 @@ public interface ListingMapper {
     @Mapping(target = "favorites", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "slug", ignore = true)
     void updateListingFromRequest(UpdateListingRequest request, @MappingTarget Listing listing);
 
     /* ===================== Helper Methods ===================== */

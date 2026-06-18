@@ -302,4 +302,14 @@ public class ListingController {
         return ResponseEntity.ok(Map.of("url", imageUrl));
     }
 
+    @GetMapping("/public/{slug}")
+    public ResponseEntity<ApiResponse<ListingDetailResponse>> getBySlug(
+            @PathVariable String slug,
+            @AuthenticationPrincipal CustomUserDetails principal
+    ) {
+        Long userId = principal != null ? principal.getId() : null;
+        ListingDetailResponse listing = listingService.getBySlug(slug, userId);
+        return ResponseEntity.ok(ApiResponse.success(listing));
+    }
+
 }
