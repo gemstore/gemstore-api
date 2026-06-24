@@ -63,42 +63,47 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/auth/login",
                                 "/api/auth/register",
+                                "/api/auth/password/forgot",
+                                "/api/auth/password/reset",
                                 "/oauth2/**",
                                 "/login/oauth2/**"
                         ).permitAll()
 
-                        // GEM PRICE PUBLIC ENDPOINTS
+                        // Gem price
                         .requestMatchers("/api/v1/gems/price/options").permitAll()
                         .requestMatchers("/api/v1/gems/price/health").permitAll()
-
-                        // GEM PRICE PROTECTED ENDPOINTS
-                        .requestMatchers("/api/v1/gems/price/predict").authenticated()
                         .requestMatchers("/api/v1/gems/price/**").authenticated()
 
-                        // Message endpoints
+                        // Messages
                         .requestMatchers("/api/v1/messages/**").authenticated()
 
-                        // Public APIs
+                        // Lookups
                         .requestMatchers("/api/v1/lookups/**").permitAll()
-                        .requestMatchers("/api/v1/listings/search").permitAll()
-                        .requestMatchers("/api/v1/listings/seller/**").permitAll()
 
-                        // ✅ Protected listing endpoints (MUST be BEFORE the GET wildcard)
+                        // ===== LISTINGS — specific rules BEFORE wildcards =====
+
+                        // Protected listing endpoints — MUST come first
                         .requestMatchers(HttpMethod.GET, "/api/v1/listings/my").authenticated()
-
-                        // Public: view any listing by ID (wildcard AFTER specific routes)
-                        .requestMatchers(HttpMethod.GET, "/api/v1/listings/**").permitAll()
-
-                        .requestMatchers("/api/test").permitAll()
-
-                        // Upload requires auth
                         .requestMatchers(HttpMethod.POST, "/api/v1/listings/upload").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/listings").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/listings/**").authenticated()
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/listings/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/listings/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/listings/*/sold").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/listings/*/archive").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/listings/*/reactivate").authenticated()
+
+                        // Public listing endpoints — after protected ones
+                        .requestMatchers(HttpMethod.GET, "/api/v1/listings/search").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/listings/seller/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/listings/public/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/listings/**").permitAll()
 
                         // Likes
                         .requestMatchers(HttpMethod.GET, "/api/v1/likes/*/count").permitAll()
                         .requestMatchers("/api/v1/likes/**").authenticated()
 
-                        // Admin endpoints — ADMIN role required
+                        // Admin
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
                         // Everything else

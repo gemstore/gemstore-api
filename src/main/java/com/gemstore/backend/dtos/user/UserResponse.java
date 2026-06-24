@@ -26,6 +26,7 @@ public class UserResponse {
     private String locale;
 
     // New profile fields
+    private String gender;
     private String website;
     private String bio;
     private LocalDate dateOfBirth;

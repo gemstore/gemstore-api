@@ -21,6 +21,7 @@ import java.math. BigDecimal;
 import java. time.LocalDateTime;
 import java.util. List;
 import java.util. Set;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -60,7 +61,8 @@ public class ListingService {
 
         listing = listingRepository. save(listing);
 
-        listing. setListingNumber(generateListingNumber(listing.getId()));
+        listing.setListingNumber(generateListingNumber(listing.getId()));
+        listing.setSlug(generateSlug());
         listing = listingRepository.save(listing);
 
         if (request.getImageUrls() != null && ! request.getImageUrls().isEmpty()) {
@@ -411,5 +413,19 @@ public class ListingService {
                 .hasNext(page.hasNext())
                 .hasPrevious(page.hasPrevious())
                 .build();
+    }
+
+    @Transactional
+    public ListingDetailResponse getBySlug(String slug, Long userId) {
+        Listing listing = listingRepository.findBySlug(slug)
+                .orElseThrow(() -> new ResourceNotFoundException("Listing not found"));
+        return getListingDetail(listing.getId(), userId);
+    }
+
+    private String generateSlug() {
+        return UUID.randomUUID()
+                .toString()
+                .replace("-", "")
+                .substring(0, 11);
     }
 }

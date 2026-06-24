@@ -93,6 +93,7 @@ public interface UserMapper {
     @Mapping(target = "timezone", ignore = true)
     @Mapping(target = "locale", ignore = true)
     @Mapping(target = "dateOfBirth", source = "dateOfBirth")
+    @Mapping(target = "gender", source = "gender")
     User toEntity(RegisterUserRequest request);
 
     /* ===================== Partial Profile Update ===================== */
@@ -114,6 +115,7 @@ public interface UserMapper {
     @Mapping(target = "privateProfile", source = "privateProfile")
 
     @Mapping(target = "dateOfBirth", source = "dateOfBirth")
+    @Mapping(target = "gender", source = "gender")
 
     void updateUserFromProfile(UpdateProfileRequest request, @MappingTarget User user);
 
@@ -157,6 +159,7 @@ public interface UserMapper {
     @Mapping(target = "timezone", ignore = true)
     @Mapping(target = "locale", ignore = true)
     @Mapping(target = "dateOfBirth", source = "dateOfBirth")
+    @Mapping(target = "gender", source = "gender")
     User toEntityWithEncoding(RegisterUserRequest request,
                               @Context PasswordEncoderContext passwordEncoderContext);
 

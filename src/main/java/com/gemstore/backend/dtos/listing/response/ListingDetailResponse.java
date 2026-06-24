@@ -19,6 +19,7 @@ public class ListingDetailResponse {
 
     private Long id;
     private String listingNumber;
+    private String slug;
 
     // Basic Info
     private String title;

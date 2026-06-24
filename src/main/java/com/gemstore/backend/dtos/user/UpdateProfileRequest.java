@@ -31,6 +31,10 @@ public class UpdateProfileRequest {
     private String locale;
 
     // New profile fields
+
+    @Size(max = 50)
+    private String gender;
+
     @Size(max = 500)
     private String website;
 

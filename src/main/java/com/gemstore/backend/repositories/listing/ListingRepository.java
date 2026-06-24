@@ -135,4 +135,6 @@ public interface ListingRepository extends JpaRepository<Listing, Long>, JpaSpec
 
     // Get all listings by seller (regardless of status)
     Page<Listing> findBySellerId(Long sellerId, Pageable pageable);
+
+    Optional<Listing> findBySlug(String slug);
 }

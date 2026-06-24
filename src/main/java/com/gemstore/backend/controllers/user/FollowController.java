@@ -76,7 +76,10 @@ public class FollowController {
             @PathVariable Long userId,
             @AuthenticationPrincipal CustomUserDetails principal
     ) {
-        String status = followService. getFollowStatus(principal.getId(), userId);
+        if (principal == null) {
+            return ResponseEntity.ok(ApiResponse.success(new FollowStatusResponse("NONE")));
+        }
+        String status = followService.getFollowStatus(principal.getId(), userId);
         return ResponseEntity.ok(ApiResponse.success(new FollowStatusResponse(status)));
     }
 
@@ -90,7 +93,7 @@ public class FollowController {
             @PathVariable Long followerId,
             @AuthenticationPrincipal CustomUserDetails principal
     ) {
-        followService.acceptFollowRequest(principal. getId(), followerId);
+        followService.acceptFollowRequest(principal.getId(), followerId);
         return ResponseEntity.ok(ApiResponse.success("Follow request accepted", null));
     }
 
@@ -127,7 +130,7 @@ public class FollowController {
     public ResponseEntity<ApiResponse<CountResponse>> getPendingRequestsCount(
             @AuthenticationPrincipal CustomUserDetails principal
     ) {
-        long count = followService. getPendingRequestsCount(principal.getId());
+        long count = followService.getPendingRequestsCount(principal.getId());
         return ResponseEntity.ok(ApiResponse.success(new CountResponse(count)));
     }
 
@@ -145,8 +148,8 @@ public class FollowController {
     ) {
         Long currentUserId = principal != null ? principal.getId() : null;
         PageResponse<UserSummaryResponse> followers =
-                followService. getFollowers(userId, currentUserId, page, size);
-        return ResponseEntity. ok(ApiResponse. success(followers));
+                followService.getFollowers(userId, currentUserId, page, size);
+        return ResponseEntity.ok(ApiResponse.success(followers));
     }
 
     /**
@@ -173,8 +176,8 @@ public class FollowController {
             @PathVariable Long followerId,
             @AuthenticationPrincipal CustomUserDetails principal
     ) {
-        followService.removeFollower(principal. getId(), followerId);
-        return ResponseEntity.ok(ApiResponse. success("Follower removed", null));
+        followService.removeFollower(principal.getId(), followerId);
+        return ResponseEntity.ok(ApiResponse.success("Follower removed", null));
     }
 
     /* ===================== Response DTOs ===================== */

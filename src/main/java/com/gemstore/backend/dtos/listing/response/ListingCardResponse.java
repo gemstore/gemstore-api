@@ -18,6 +18,7 @@ public class ListingCardResponse {
 
     private Long id;
     private String listingNumber;
+    private String slug;
     private String title;
 
     // Images - ALL images for carousel
@@ -47,11 +48,12 @@ public class ListingCardResponse {
     // Status
     private String status;
     private Boolean isSold;
-    private Boolean isCertified;  // ADD
+    private Boolean isCertified;
 
     // Seller
     private Long sellerId;
     private String sellerName;
+    private String sellerUsername;
     private String sellerAvatar;
 
     // Timestamps

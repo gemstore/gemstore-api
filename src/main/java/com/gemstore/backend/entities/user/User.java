@@ -37,7 +37,7 @@ public class User {
     private Long id;
 
     // Display name (what you show in UI)
-    @Column(name = "display_name", length = 150)
+    @Column(name = "display_name", length = 150, nullable = false)
     private String displayName;
 
     @Column(name = "first_name", length = 100)
@@ -109,6 +109,9 @@ public class User {
     private String locale;
 
     // ========== NEW PROFILE FIELDS ==========
+
+    @Column(length = 50)
+    private String gender; // e.g., "MALE", "FEMALE", "OTHER", "PREFER_NOT_TO_SAY"
 
     @Column(length = 500)
     private String website;

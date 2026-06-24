@@ -31,7 +31,22 @@ public class PasswordController {
         return ResponseEntity.noContent().build();
     }
 
-    // Future:
-    //  POST /reset/request  (send email)
-    //  POST /reset/confirm  (token + new password)
+
+    // ---  FORGOT PASSWORD (Sends Email) ---
+    public record ForgotPasswordRequest(String email) {}
+
+    @PostMapping("/forgot")
+    public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        userService.processForgotPassword(request.email());
+        return ResponseEntity.ok("If an account exists, a reset link was sent.");
+    }
+
+    // ---  RESET PASSWORD (Uses Token) ---
+    public record ResetPasswordRequest(String token, String newPassword) {}
+
+    @PostMapping("/reset")
+    public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordRequest request) {
+        userService.resetPasswordWithToken(request.token(), request.newPassword());
+        return ResponseEntity.ok("Password reset successfully");
+    }
 }

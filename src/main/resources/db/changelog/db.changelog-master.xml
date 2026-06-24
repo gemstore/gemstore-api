@@ -159,4 +159,33 @@
         <sqlFile path="V27__create_OTP_table.sql" relativeToChangelogFile="true"/>
     </changeSet>
 
+    <!-- 28. create reset token table -->
+    <changeSet id="20251114162740-28" author="mnm-musharraf">
+        <sqlFile path="V28__create_reset_token.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+
+    <!-- 29. add gender users table -->
+    <changeSet id="20251114162740-29" author="mnm-musharraf">
+        <sqlFile path="V29__add_gender_to_users_table.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+
+    <!-- 30 Fix follower count trigger -->
+    <changeSet id="20251114162740-30" author="mnm-musharraf">
+        <sqlFile path="V30__fix_follower_count_trigger.sql"
+                 relativeToChangelogFile="true"
+                 splitStatements="false"
+                 endDelimiter="$$"
+        />
+    </changeSet>
+
+    <!-- 31. Repair drifted follower counts -->
+    <changeSet id="20251114162740-31" author="mnm-musharraf">
+        <sqlFile path="V31__repair_follower_counts.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+
+    <!-- 32. Add SLUG TO Listings table -->
+    <changeSet id="20251114162740-32" author="mnm-musharraf">
+        <sqlFile path="V32__add_SLUG_to_listings.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+
 </databaseChangeLog>
