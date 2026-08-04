@@ -88,6 +88,9 @@ public class ListingService {
         if (listing.getIsSold()) {
             throw new IllegalStateException("Cannot update a sold listing");
         }
+        if (listing.getStatus() == ListingStatus.ARCHIVED) {
+            throw new IllegalStateException("Cannot update an archived listing");
+        }
 
         listingMapper.updateListingFromRequest(request, listing);
 
@@ -127,7 +130,7 @@ public class ListingService {
 
     @Transactional(readOnly = true)
     public ListingResponse getListingById(Long listingId, Long userId) {
-        Listing listing = getListingEntity(listingId);
+        Listing listing = getViewableListingEntity(listingId, userId);
 
         ListingResponse response = listingMapper.toResponse(listing);
 
@@ -141,7 +144,7 @@ public class ListingService {
 
     @Transactional
     public ListingDetailResponse getListingDetail(Long listingId, Long userId) {
-        Listing listing = getListingEntity(listingId);
+        Listing listing = getViewableListingEntity(listingId, userId);
 
         if (userId != null) {
             listingViewService.recordView(listingId, userId);
@@ -249,6 +252,10 @@ public class ListingService {
             throw new IllegalStateException("Listing is already sold");
         }
 
+        if (listing.getStatus() == ListingStatus.ARCHIVED) {
+            throw new IllegalStateException("Cannot mark an archived listing as sold");
+        }
+
         listing.setIsSold(true);
         listing.setSoldPrice(soldPrice != null ? soldPrice : listing.getPrice());
         listing.setSoldAt(LocalDateTime.now());
@@ -276,6 +283,9 @@ public class ListingService {
 
         if (!listing.getSeller().getId().equals(userId)) {
             throw new UnauthorizedException("You can only archive your own listings");
+        }
+        if (listing.getIsSold()) {
+            throw new IllegalStateException("Cannot archive a sold listing");
         }
 
         listing.setStatus(ListingStatus.ARCHIVED);
@@ -307,7 +317,7 @@ public class ListingService {
 
     @Transactional
     public void deleteListing(Long listingId, Long userId) {
-        log.info("Deleting listing: {}", listingId);
+        log.info("Soft deleting listing: {} by user: {}", listingId, userId);
 
         Listing listing = getListingEntity(listingId);
 
@@ -315,9 +325,15 @@ public class ListingService {
             throw new UnauthorizedException("You can only delete your own listings");
         }
 
-        listingRepository.delete(listing);
+        if (listing.getIsSold()) {
+            throw new IllegalStateException("Cannot delete a sold listing — archive it instead");
+        }
 
-        log.info("Listing deleted: {}", listingId);
+        //  Soft delete — never hard delete user-initiated deletes
+        listing.softDelete(userId);
+        listingRepository.save(listing);
+
+        log.info("Listing soft deleted: {} by user: {}", listingId, userId);
     }
 
     /* ===================== Helper Methods ===================== */
@@ -325,6 +341,17 @@ public class ListingService {
     private Listing getListingEntity(Long listingId) {
         return listingRepository.findById(listingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Listing not found: " + listingId));
+    }
+
+    private Listing getViewableListingEntity(Long listingId, Long userId){
+        Listing listing = getListingEntity(listingId);
+
+        boolean isOwner = userId != null && listing.getSeller().getId().equals(userId);
+
+        if(isOwner && listing.getStatus() == ListingStatus.ARCHIVED){
+            throw new ResourceNotFoundException("Listing Not Found: " + listingId);
+        }
+        return listing;
     }
 
     private void resolveLookupEntities(Listing listing, Integer gemstoneTypeId, Integer colorId,
@@ -370,7 +397,7 @@ public class ListingService {
     private Pageable createPageable(ListingSearchRequest request) {
         Sort sort = Sort.by(
                 "ASC".equalsIgnoreCase(request.getSortDirection())
-                        ? Sort.Direction. ASC
+                        ? Sort.Direction.ASC
                         : Sort. Direction.DESC,
                 request.getSortBy() != null ? request.getSortBy() : "createdAt"
         );

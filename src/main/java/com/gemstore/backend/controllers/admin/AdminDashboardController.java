@@ -9,7 +9,6 @@ import com.gemstore.backend.repositories.report.ReportRepository;
 import com.gemstore.backend.repositories.user.UserRepository;
 import com.gemstore.backend.services.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -41,40 +40,18 @@ public class AdminDashboardController {
     public ResponseEntity<Map<String, Object>> getDashboardStats() {
         Map<String, Object> stats = new HashMap<>();
 
-        // User stats
-        long totalUsers = userRepository.count();
-        stats.put("totalUsers", totalUsers);
+        stats.put("totalUsers", userRepository.count());
 
-        // Listing stats
-        long activeListings = listingRepository.countBySellerIdAndStatus(null, ListingStatus.ACTIVE);
-        stats.put("activeListings", activeListings);
+        //  Use native admin queries — bypasses @SQLRestriction
+        stats.put("activeListings", listingRepository.countByStatusForAdmin("ACTIVE"));
+        stats.put("totalSold", listingRepository.countByStatusForAdmin("SOLD"));
+        stats.put("suspendedListings", listingRepository.countByStatusForAdmin("SUSPENDED"));
+        stats.put("deletedListings", listingRepository.countByStatusForAdmin("DELETED"));
 
-        // Use raw count for active listings since countBySellerIdAndStatus with null may not work
-        long totalActiveListings = listingRepository.findAll().stream()
-                .filter(l -> l.getStatus() == ListingStatus.ACTIVE)
-                .count();
-        stats.put("activeListings", totalActiveListings);
-
-        long totalSold = listingRepository.findAll().stream()
-                .filter(l -> l.getStatus() == ListingStatus.SOLD)
-                .count();
-        stats.put("totalSold", totalSold);
-
-        long suspendedListings = listingRepository.findAll().stream()
-                .filter(l -> l.getStatus() == ListingStatus.SUSPENDED)
-                .count();
-        stats.put("suspendedListings", suspendedListings);
-
-        // Report stats
-        long pendingReports = reportRepository.countByStatus(ReportStatus.PENDING);
-        long reviewingReports = reportRepository.countByStatus(ReportStatus.REVIEWING);
-        long resolvedReports = reportRepository.countByStatus(ReportStatus.RESOLVED);
-        long totalReports = reportRepository.count();
-
-        stats.put("pendingReports", pendingReports);
-        stats.put("reviewingReports", reviewingReports);
-        stats.put("resolvedReports", resolvedReports);
-        stats.put("totalReports", totalReports);
+        stats.put("pendingReports", reportRepository.countByStatus(ReportStatus.PENDING));
+        stats.put("reviewingReports", reportRepository.countByStatus(ReportStatus.REVIEWING));
+        stats.put("resolvedReports", reportRepository.countByStatus(ReportStatus.RESOLVED));
+        stats.put("totalReports", reportRepository.count());
 
         return ResponseEntity.ok(Map.of("success", true, "data", stats));
     }
@@ -92,7 +69,6 @@ public class AdminDashboardController {
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        // Get all users and filter in memory (simple approach)
         List<UserResponse> allUsers = userService.findAllRaw().stream()
                 .filter(u -> status == null || status.isEmpty() || u.getStatus().equalsIgnoreCase(status))
                 .filter(u -> search == null || search.isEmpty() ||
@@ -103,7 +79,6 @@ public class AdminDashboardController {
                 .map(userMapper::toUserResponse)
                 .toList();
 
-        // Manual pagination
         int start = page * size;
         int end = Math.min(start + size, allUsers.size());
         List<UserResponse> pageContent = start < allUsers.size() ? allUsers.subList(start, end) : List.of();
@@ -128,15 +103,9 @@ public class AdminDashboardController {
         var user = userService.getById(id);
         UserResponse response = userMapper.toUserResponse(user);
 
-        // Add extra admin info
-        long totalListings = listingRepository.findAll().stream()
-                .filter(l -> l.getSeller().getId().equals(id))
-                .count();
-
-        long activeListings = listingRepository.findAll().stream()
-                .filter(l -> l.getSeller().getId().equals(id) && l.getStatus() == ListingStatus.ACTIVE)
-                .count();
-
+        //  Use admin queries — bypasses @SQLRestriction
+        long totalListings = listingRepository.countAllBySellerIdForAdmin(id);
+        long activeListings = listingRepository.countActiveBySellerIdForAdmin(id);
         long reportCount = reportRepository.findByReportedUserIdOrderByCreatedAtDesc(id).size();
 
         Map<String, Object> data = new HashMap<>();
@@ -159,7 +128,8 @@ public class AdminDashboardController {
             @RequestParam(required = false) String status,
             @RequestParam(required = false) String search
     ) {
-        var allListings = listingRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt")).stream()
+        //  Use admin query — bypasses @SQLRestriction, shows ALL listings including deleted
+        var allListings = listingRepository.findAllForAdmin().stream()
                 .filter(l -> status == null || status.isEmpty() || l.getStatus().name().equalsIgnoreCase(status))
                 .filter(l -> search == null || search.isEmpty() ||
                         (l.getTitle() != null && l.getTitle().toLowerCase().contains(search.toLowerCase())) ||
@@ -173,6 +143,7 @@ public class AdminDashboardController {
                     item.put("price", l.getPrice());
                     item.put("currency", l.getCurrency());
                     item.put("status", l.getStatus());
+                    item.put("deletedAt", l.getDeletedAt()); // ✅ show deleted_at to admin
                     item.put("gemstoneType", l.getGemstoneType() != null ? l.getGemstoneType().getName() : null);
                     item.put("caratWeight", l.getCaratWeight());
                     item.put("createdAt", l.getCreatedAt());
@@ -182,7 +153,6 @@ public class AdminDashboardController {
                     item.put("sellerUsername", l.getSeller().getUsername());
                     item.put("sellerDisplayName", l.getSeller().getDisplayName());
 
-                    // Get primary image
                     var images = l.getImages();
                     if (images != null && !images.isEmpty()) {
                         var primaryImage = images.stream()
@@ -192,7 +162,6 @@ public class AdminDashboardController {
                         item.put("imageUrl", primaryImage.getImageUrl());
                     }
 
-                    // Report count
                     long reportCount = reportRepository.countByReportedListingId(l.getId());
                     item.put("reportCount", reportCount);
 
@@ -200,7 +169,6 @@ public class AdminDashboardController {
                 })
                 .toList();
 
-        // Manual pagination
         int start = page * size;
         int end = Math.min(start + size, allListings.size());
         var pageContent = start < allListings.size() ? allListings.subList(start, end) : List.of();
@@ -225,11 +193,19 @@ public class AdminDashboardController {
             @PathVariable Long id,
             @PathVariable String status
     ) {
-        var listing = listingRepository.findById(id)
+        //  Use admin query — can update status of soft-deleted listings too
+        var listing = listingRepository.findByIdForAdmin(id)
                 .orElseThrow(() -> new RuntimeException("Listing not found: " + id));
 
         ListingStatus newStatus = ListingStatus.valueOf(status.toUpperCase());
         listing.setStatus(newStatus);
+
+        //  If admin restores a deleted listing, clear the deletedAt
+        if (newStatus == ListingStatus.ACTIVE) {
+            listing.setDeletedAt(null);
+            listing.setDeletedBy(null);
+        }
+
         listingRepository.save(listing);
 
         return ResponseEntity.ok(Map.of(

@@ -227,7 +227,7 @@ public class ReportService {
         }
     }
 
-    // ✅ Updated to use String status
+    //  Updated to use String status
     private void executeAction(Report report, ReportAction action) {
         switch (action) {
             case LISTING_REMOVED, LISTING_SUSPENDED -> {
@@ -257,7 +257,7 @@ public class ReportService {
             case MESSAGE_DELETED -> {
                 if (report.getReportedMessage() != null) {
                     Message message = report.getReportedMessage();
-                    message.setIsDeleted(true);  // ✅ Make sure Message has this field
+                    message.setIsDeleted(true);  //  Make sure Message has this field
                     messageRepository.save(message);
                     log.info("Message {} deleted due to report {}", message.getId(), report.getId());
                 }
@@ -288,11 +288,23 @@ public class ReportService {
                 .reporterId(report.getReporter().getId())
                 .reporterUsername(report.getReporter().getUsername());
 
-        // Set reported entity info
+        //  Null/soft-delete safe — the FK may still point to a listing that no longer
+        // passes @SQLRestriction("deleted_at IS NULL"). getId() on the lazy proxy is safe
+        // (Hibernate resolves it from the FK without hitting the DB), but the full entity
+        // may no longer be loadable, so we verify existence via the admin bypass lookup.
         if (report.getReportedListing() != null) {
-            builder.reportedListingId(report.getReportedListing().getId())
-                    .reportedListingTitle(report.getReportedListing().getTitle());
+            Long listingId = report.getReportedListing().getId();
+            listingRepository.findByIdForAdmin(listingId).ifPresentOrElse(
+                    listing -> builder.reportedListingId(listing.getId())
+                            .reportedListingTitle(listing.getTitle()),
+                    () -> builder.reportedListingId(listingId)
+                            .reportedListingTitle("[Listing no longer available]")
+            );
+        } else {
+            builder.reportedListingId(null)
+                    .reportedListingTitle("[Listing no longer available]");
         }
+
         if (report.getReportedUser() != null) {
             builder.reportedUserId(report.getReportedUser().getId())
                     .reportedUsername(report.getReportedUser().getUsername());
