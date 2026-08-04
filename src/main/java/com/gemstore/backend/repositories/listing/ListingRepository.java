@@ -77,11 +77,12 @@ public interface ListingRepository extends JpaRepository<Listing, Long>, JpaSpec
 
     // Full-text search (requires search_vector column in DB)
     @Query(value = """
-            SELECT * FROM listings
-            WHERE status = 'ACTIVE'
-            AND search_vector @@ plainto_tsquery('english', :query)
-            ORDER BY ts_rank(search_vector, plainto_tsquery('english', :query)) DESC
-            """, nativeQuery = true)
+        SELECT * FROM listings
+        WHERE status = 'ACTIVE'
+        AND deleted_at IS NULL
+        AND search_vector @@ plainto_tsquery('english', :query)
+        ORDER BY ts_rank(search_vector, plainto_tsquery('english', :query)) DESC
+        """, nativeQuery = true)
     Page<Listing> searchByText(@Param("query") String query, Pageable pageable);
 
     // LIKE-based text search — searches across all relevant fields
@@ -137,4 +138,27 @@ public interface ListingRepository extends JpaRepository<Listing, Long>, JpaSpec
     Page<Listing> findBySellerId(Long sellerId, Pageable pageable);
 
     Optional<Listing> findBySlug(String slug);
+
+    // ==================== ADMIN QUERIES (bypass @SQLRestriction) ====================
+
+    @Query(value = "SELECT * FROM listings ORDER BY created_at DESC", nativeQuery = true)
+    List<Listing> findAllForAdmin();
+
+    @Query(value = "SELECT * FROM listings WHERE id = :id", nativeQuery = true)
+    Optional<Listing> findByIdForAdmin(@Param("id") Long id);
+
+    @Query(value = "SELECT * FROM listings WHERE seller_id = :sellerId ORDER BY created_at DESC", nativeQuery = true)
+    List<Listing> findAllBySellerIdForAdmin(@Param("sellerId") Long sellerId);
+
+    @Query(value = "SELECT COUNT(*) FROM listings", nativeQuery = true)
+    long countAllForAdmin();
+
+    @Query(value = "SELECT COUNT(*) FROM listings WHERE status = :status", nativeQuery = true)
+    long countByStatusForAdmin(@Param("status") String status);
+
+    @Query(value = "SELECT COUNT(*) FROM listings WHERE seller_id = :sellerId", nativeQuery = true)
+    long countAllBySellerIdForAdmin(@Param("sellerId") Long sellerId);
+
+    @Query(value = "SELECT COUNT(*) FROM listings WHERE seller_id = :sellerId AND status = 'ACTIVE' AND deleted_at IS NULL", nativeQuery = true)
+    long countActiveBySellerIdForAdmin(@Param("sellerId") Long sellerId);
 }
