@@ -3,6 +3,7 @@ package com.gemstore.backend.controllers.auth;
 import com.gemstore.backend.dtos.auth.ChangePasswordRequest;
 import com.gemstore.backend.security.CustomUserDetails;
 import com.gemstore.backend.services.user.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ public class PasswordController {
      * Change current user's password.
      */
     @PostMapping("/change")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Void> changePassword(
             @Valid @RequestBody ChangePasswordRequest request,
             @AuthenticationPrincipal CustomUserDetails principal

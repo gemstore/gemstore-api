@@ -2,6 +2,7 @@ package com.gemstore.backend.controllers.admin;
 
 import com.gemstore.backend.mappers.user.UserMapper;
 import com.gemstore.backend.services.user.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,6 +14,7 @@ import java.util.Map;
 @RequestMapping("/api/admin/users")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")
+@SecurityRequirement(name="bearerAuth")
 public class AdminUserController {
 
     private final UserService userService;

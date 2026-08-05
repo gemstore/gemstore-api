@@ -8,6 +8,7 @@ import com.gemstore.backend.repositories.listing.ListingRepository;
 import com.gemstore.backend.repositories.report.ReportRepository;
 import com.gemstore.backend.repositories.user.UserRepository;
 import com.gemstore.backend.services.user.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,7 @@ import java.util.Map;
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")
+@SecurityRequirement(name="bearerAuth")
 public class AdminDashboardController {
 
     private final UserRepository userRepository;

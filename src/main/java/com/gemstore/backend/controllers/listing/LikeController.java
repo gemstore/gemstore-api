@@ -2,6 +2,7 @@ package com.gemstore.backend.controllers.listing;
 
 import com.gemstore.backend.security.CustomUserDetails;
 import com.gemstore.backend.services.listing.LikeService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,6 +21,7 @@ public class LikeController {
      * Toggle like on a listing
      */
     @PostMapping("/{listingId}/toggle")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Map<String, Object>> toggleLike(
             @PathVariable Long listingId,
             @AuthenticationPrincipal CustomUserDetails user) {

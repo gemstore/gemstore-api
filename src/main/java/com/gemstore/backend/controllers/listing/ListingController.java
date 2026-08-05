@@ -7,6 +7,10 @@ import com.gemstore.backend.dtos.listing.response.*;
 import com.gemstore.backend.security.CustomUserDetails;
 import com.gemstore.backend.services.listing.ListingImageService;
 import com.gemstore.backend.services.listing.ListingService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +27,10 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/listings")
 @RequiredArgsConstructor
+@Tag(
+        name = "Listings",
+        description = "Gemstone marketplace listing operations"
+)
 public class ListingController {
 
     private final ListingService listingService;
@@ -30,7 +38,30 @@ public class ListingController {
 
     /* ===================== Create ===================== */
 
+    @Operation(
+            summary = "Create a new listing",
+            description = "Creates a gemstone listing for the authenticated user."
+    )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "201",
+                    description = "Listing created successfully"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid listing information"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "401",
+                    description = "Authentication required"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "500",
+                    description = "Internal server error"
+            )
+    })
     @PostMapping
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<ApiResponse<ListingResponse>> createListing(
             @Valid @RequestBody CreateListingRequest request,
             @AuthenticationPrincipal CustomUserDetails user) {
@@ -71,6 +102,24 @@ public class ListingController {
         return ResponseEntity.ok(ApiResponse.success(listing));
     }
 
+    @Operation(
+            summary = "Get all active listings",
+            description = "Returns active gemstone listings with pagination. Authentication is optional and may be used to include user-specific information."
+    )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Listings returned successfully"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid pagination parameters"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "500",
+                    description = "Internal server error"
+            )
+    })
     @GetMapping
     public ResponseEntity<ApiResponse<PageResponse<ListingCardResponse>>> getActiveListings(
             @RequestParam(defaultValue = "0") int page,
@@ -161,6 +210,7 @@ public class ListingController {
     }
 
     @GetMapping("/my")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<ApiResponse<PageResponse<ListingCardResponse>>> getMyListings(
             @RequestParam(required = false) String status,
             @RequestParam(defaultValue = "0") int page,
@@ -181,6 +231,7 @@ public class ListingController {
     /* ===================== Update ===================== */
 
     @PutMapping("/{id}")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<ApiResponse<ListingResponse>> updateListing(
             @PathVariable Long id,
             @Valid @RequestBody UpdateListingRequest request,
@@ -198,6 +249,7 @@ public class ListingController {
     }
 
     @PatchMapping("/{id}")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<ApiResponse<ListingResponse>> patchListing(
             @PathVariable Long id,
             @RequestBody UpdateListingRequest request,
@@ -217,6 +269,7 @@ public class ListingController {
     /* ===================== Status ===================== */
 
     @PostMapping("/{id}/sold")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<ApiResponse<ListingResponse>> markAsSold(
             @PathVariable Long id,
             @RequestParam(required = false) BigDecimal soldPrice,
@@ -234,6 +287,7 @@ public class ListingController {
     }
 
     @PostMapping("/{id}/archive")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<ApiResponse<Void>> archiveListing(
             @PathVariable Long id,
             @AuthenticationPrincipal CustomUserDetails user) {
@@ -248,6 +302,7 @@ public class ListingController {
     }
 
     @PostMapping("/{id}/reactivate")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<ApiResponse<ListingResponse>> reactivateListing(
             @PathVariable Long id,
             @AuthenticationPrincipal CustomUserDetails user) {
@@ -266,6 +321,7 @@ public class ListingController {
     /* ===================== Delete ===================== */
 
     @DeleteMapping("/{id}")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<ApiResponse<Void>> deleteListing(
             @PathVariable Long id,
             @AuthenticationPrincipal CustomUserDetails user) {
@@ -282,6 +338,7 @@ public class ListingController {
     /* ===================== Image Upload ===================== */
 
     @PostMapping("/upload")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<?> uploadListingImage(
             @RequestParam("file") MultipartFile file,
             @AuthenticationPrincipal CustomUserDetails user

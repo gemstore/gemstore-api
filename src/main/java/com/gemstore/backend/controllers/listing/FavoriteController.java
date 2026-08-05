@@ -6,6 +6,7 @@ import com.gemstore.backend.dtos.common.PageResponse;
 import com.gemstore.backend.dtos.listing.response.ListingCardResponse;
 import com.gemstore.backend.security.CustomUserDetails;
 import com.gemstore.backend.services.listing.FavoriteService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/favorites")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 public class FavoriteController {
 
     private final FavoriteService favoriteService;

@@ -7,6 +7,7 @@ import com.gemstore.backend.services.prediction.GemPriceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,7 @@ public class GemPriceController {
             @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
             @ApiResponse(responseCode = "503", description = "Price prediction service unavailable")
     })
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<GemPriceResponseDto> predictPrice(
             @Valid @RequestBody GemPriceRequestDto request) {
 
@@ -47,6 +49,7 @@ public class GemPriceController {
 
     @PostMapping("/predict/async")
     @Operation(summary = "Predict gem price (async)", description = "Get price prediction asynchronously")
+    @SecurityRequirement(name = "bearerAuth")
     public Mono<ResponseEntity<GemPriceResponseDto>> predictPriceAsync(
             @Valid @RequestBody GemPriceRequestDto request) {
 
@@ -64,6 +67,7 @@ public class GemPriceController {
 
     @GetMapping("/status")
     @Operation(summary = "Get service status", description = "Get detailed service status")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Map<String, Object>> getServiceStatus() {
         Map<String, Object> status = new HashMap<>();
         status.put("available", gemPriceService.isServiceAvailable());
@@ -120,6 +124,7 @@ public class GemPriceController {
 
     @PostMapping("/estimate/quick")
     @Operation(summary = "Quick price estimate", description = "Get a quick price estimate with minimal parameters")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<GemPriceResponseDto> quickEstimate(
             @RequestParam String gemType,
             @RequestParam Double caratWeight,

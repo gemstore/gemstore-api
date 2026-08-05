@@ -7,6 +7,7 @@ import com.gemstore.backend.entities.report.ReportStatus;
 import com.gemstore.backend.entities.report.ReportType;
 import com.gemstore.backend.security.CustomUserDetails;
 import com.gemstore.backend.services.report.ReportService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -34,6 +35,7 @@ public class ReportController {
      * POST /api/v1/reports
      */
     @PostMapping
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Map<String, Object>> createReport(
             @AuthenticationPrincipal CustomUserDetails user,
             @Valid @RequestBody CreateReportRequest request
@@ -59,6 +61,7 @@ public class ReportController {
      * GET /api/v1/reports/my-reports
      */
     @GetMapping("/my-reports")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Map<String, Object>> getMyReports(
             @AuthenticationPrincipal CustomUserDetails user,
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
@@ -83,6 +86,7 @@ public class ReportController {
      * GET /api/v1/reports/check/listing/{listingId}
      */
     @GetMapping("/check/listing/{listingId}")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Map<String, Object>> hasReportedListing(
             @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable Long listingId
@@ -105,6 +109,7 @@ public class ReportController {
      * GET /api/v1/reports/{reportId}
      */
     @GetMapping("/{reportId}")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Map<String, Object>> getReport(
             @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable Long reportId
@@ -140,6 +145,7 @@ public class ReportController {
      */
     @GetMapping("/admin")
     @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Map<String, Object>> getAllReports(
             @RequestParam(required = false) ReportStatus status,
             @RequestParam(required = false) ReportType type,
@@ -159,6 +165,7 @@ public class ReportController {
      */
     @GetMapping("/admin/pending-count")
     @PreAuthorize("hasRole('ADMIN')")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Map<String, Object>> getPendingReportsCount() {
         long count = reportService.getPendingReportsCount();
 
