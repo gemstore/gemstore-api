@@ -5,9 +5,11 @@ import com.gemstore.backend.dtos.user.UserResponse;
 import com.gemstore.backend.mappers.user.UserMapper;
 import com.gemstore.backend.security.CustomUserDetails;
 import com.gemstore.backend.services.user.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,6 +56,7 @@ public class UserController {
     // ==================== /me ====================
 
     @GetMapping("/me")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<UserResponse> getCurrentUser(
             @AuthenticationPrincipal CustomUserDetails principal
     ) {
@@ -64,6 +67,7 @@ public class UserController {
     }
 
     @PatchMapping("/me")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<UserResponse> patchProfile(
             @Valid @RequestBody UpdateProfileRequest request,
             @AuthenticationPrincipal CustomUserDetails principal
@@ -76,6 +80,7 @@ public class UserController {
     }
 
     @PutMapping("/me")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<UserResponse> updateProfile(
             @Valid @RequestBody UpdateProfileRequest request,
             @AuthenticationPrincipal CustomUserDetails principal
@@ -88,6 +93,7 @@ public class UserController {
     }
 
     @PostMapping("/me/avatar")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Map<String, String>> uploadAvatar(
             @RequestParam("avatar") MultipartFile file,
             @AuthenticationPrincipal CustomUserDetails principal
@@ -97,6 +103,7 @@ public class UserController {
     }
 
     @DeleteMapping("/me/avatar")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Void> deleteAvatar(
             @AuthenticationPrincipal CustomUserDetails principal
     ) {
@@ -105,6 +112,7 @@ public class UserController {
     }
 
     @DeleteMapping("/me")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Void> deleteSelf(
             @AuthenticationPrincipal CustomUserDetails principal
     ) {
@@ -115,6 +123,8 @@ public class UserController {
     // ==================== ADMIN ====================
 
     @DeleteMapping("/{id}")
+    @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         userService.deleteHard(id);
         return ResponseEntity.noContent().build();

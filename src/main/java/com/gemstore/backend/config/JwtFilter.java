@@ -33,7 +33,11 @@ public class JwtFilter extends OncePerRequestFilter {
                 path.startsWith("/api/auth/register") ||
                 path.startsWith("/api/auth/password/") ||
                 path.startsWith("/oauth2") ||
-                path.startsWith("/login/oauth2");
+                path.startsWith("/login/oauth2") ||
+                // Skip filter for Swagger UI
+                path.startsWith("/v3/api-docs") ||
+                path.startsWith("/swagger-ui") ||
+                path.equals("/swagger-ui.html");
     }
 
     @Override
@@ -55,7 +59,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String token = authHeader.substring(7);
 
-        // ✅ FIX 1: Ignore literal "null", "undefined", or empty strings sent by frontend JS
+        // Ignore literal "null", "undefined", or empty strings sent by frontend JS
         if (token.isBlank() || token.equals("null") || token.equals("undefined")) {
             log.debug("[JWT Filter] Token is null/undefined string from client. Skipping.");
             chain.doFilter(request, response);
@@ -119,7 +123,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         } catch (Exception e) {
-            // ✅ FIX 2: Change log.error(..., e) to log.warn(...) so it doesn't print a 100-line stack trace!
+            //  Change log.error(..., e) to log.warn(...) so it doesn't print a 100-line stack trace!
             log.warn("[JWT Filter] Error during JWT authentication: {}", e.getMessage());
         }
 

@@ -14,6 +14,7 @@ import com.gemstore.backend.security.CustomUserDetails;
 import com.gemstore.backend.security.UserPrincipal;
 import com.gemstore.backend.services.auth.AuthService;
 import com.gemstore.backend.services.user.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -76,6 +77,7 @@ public class AuthController {
 //    }
 
     @GetMapping("/me")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<UserResponse> me(
             @AuthenticationPrincipal CustomUserDetails principal
     ) {
@@ -98,6 +100,7 @@ public class AuthController {
      * Updates the user's Date of Birth (used for Google OAuth onboarding)
      */
     @PatchMapping("/me/dob")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<UserResponse> completeProfile(
             @AuthenticationPrincipal CustomUserDetails principal,
             @RequestBody @Valid CompleteProfileRequest request
@@ -116,6 +119,7 @@ public class AuthController {
      * Resend Email Verification OTP
      */
     @PostMapping("/resend-otp")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<?> resendOtp(@AuthenticationPrincipal CustomUserDetails principal) {
 
         // The service now handles fetching the user and checking the verification rules

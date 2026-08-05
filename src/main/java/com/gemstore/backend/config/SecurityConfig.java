@@ -34,6 +34,13 @@ public class SecurityConfig {
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OAuth2FailureHandler oAuth2FailureHandler;
 
+    private static final String[] OPEN_API_PATHS ={
+            "/v3/api-docs",
+            "/v3/api-docs/**",
+            "/swagger-ui.html",
+            "/swagger-ui/**"
+    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -52,6 +59,9 @@ public class SecurityConfig {
                 )
 
                 .authorizeHttpRequests(auth -> auth
+
+                        // OpenAPI docs and Swagger UI
+                        .requestMatchers(OPEN_API_PATHS).permitAll()
 
                         // WebSocket
                         .requestMatchers("/ws/**", "/ws/info/**").permitAll()

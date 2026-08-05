@@ -5,6 +5,7 @@ import com.gemstore.backend.dtos.common.PageResponse;
 import com.gemstore.backend.dtos.notification.NotificationResponse;
 import com.gemstore.backend.security.CustomUserDetails;
 import com.gemstore.backend.services.notification.NotificationService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,6 +16,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/notifications")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 public class NotificationController {
 
     private final NotificationService notificationService;
