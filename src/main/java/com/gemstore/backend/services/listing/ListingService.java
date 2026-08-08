@@ -46,30 +46,61 @@ public class ListingService {
     /* ===================== Create Listing ===================== */
 
     @Transactional
-    public ListingResponse createListing(CreateListingRequest request, Long sellerId) {
+    public ListingResponse createListing(
+            CreateListingRequest request,
+            Long sellerId
+    ) {
         log.info("Creating listing for seller: {}", sellerId);
 
         User seller = userRepository.findById(sellerId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + sellerId));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "User not found: " + sellerId
+                        )
+                );
 
         Listing listing = listingMapper.toEntity(request);
         listing.setSeller(seller);
 
-        resolveLookupEntities(listing, request.getGemstoneTypeId(), request.getColorId(),
-                request.getColorQualityId(), request.getClarityId(), request.getCutId(),
-                request.getOriginId(), request.getTreatmentId());
+        resolveLookupEntities(
+                listing,
+                request.getGemstoneTypeId(),
+                request.getColorId(),
+                request.getColorQualityId(),
+                request.getClarityId(),
+                request.getCutId(),
+                request.getOriginId(),
+                request.getTreatmentId()
+        );
 
-        listing = listingRepository. save(listing);
-
-        listing.setListingNumber(generateListingNumber(listing.getId()));
+        // Required before the initial INSERT.
         listing.setSlug(generateSlug());
+
+        // First save generates the database ID.
         listing = listingRepository.save(listing);
 
-        if (request.getImageUrls() != null && ! request.getImageUrls().isEmpty()) {
-            listingImageService.addImages(listing, request. getImageUrls(), request.getPrimaryImageIndex());
+        // Listing number requires the generated ID.
+        listing.setListingNumber(
+                generateListingNumber(listing.getId())
+        );
+
+        listing = listingRepository.save(listing);
+
+        if (request.getImageUrls() != null
+                && !request.getImageUrls().isEmpty()) {
+
+            listingImageService.addImages(
+                    listing,
+                    request.getImageUrls(),
+                    request.getPrimaryImageIndex()
+            );
         }
 
-        log.info("Created listing: {}", listing.getListingNumber());
+        log.info(
+                "Created listing: {}",
+                listing.getListingNumber()
+        );
+
         return listingMapper.toResponse(listing);
     }
 
