@@ -1,0 +1,1690 @@
+openapi: 3.1.0
+info:
+  title: GemStoreListingsAPI
+  description: REST API for the Gem Store gemstone marketplace platform.
+  contact:
+    name: Mohammed Musharraf
+    url: https://musharraf.dev
+    email: mnmmusharraf@gmail.com
+  version: 1.0.0
+servers:
+ -
+  url: http://localhost:8080
+  description: Generated server url
+security:
+ -
+  default: []
+tags:
+ -
+  name: Listings
+  description: Gemstone marketplace listing operations
+paths:
+  /api/v1/listings/{id}:
+    get:
+      tags:
+       - Listings
+      summary: Get listing by ID
+      description: Retrieves a gemstone listing using its unique identifier. Authentication is optional and may be used to include user-specific information such as ownership or favorite status.
+      operationId: getListingById
+      parameters:
+       -
+        name: id
+        in: path
+        description: Unique identifier of the listing
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+        example: 123
+      responses:
+        "200":
+          description: Listing returned successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingResponse"
+        "404":
+          description: Listing not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingResponse"
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingResponse"
+      security:
+       -
+        default: []
+      x-auth-type: None
+      x-throttling-tier: Unlimited
+      x-wso2-application-security:
+        security-types:
+         - oauth2
+        optional: false
+    put:
+      tags:
+       - Listings
+      summary: Update a listing
+      description: Fully replaces the details of an existing gemstone listing owned by the authenticated user.
+      operationId: updateListing
+      parameters:
+       -
+        name: id
+        in: path
+        description: Unique identifier of the listing to update
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+        example: 123
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateListingRequest"
+        required: true
+      responses:
+        "200":
+          description: Listing updated successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingResponse"
+        "400":
+          description: Invalid listing information
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingResponse"
+        "401":
+          description: Authentication required
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingResponse"
+        "403":
+          description: User is not allowed to update the listing
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingResponse"
+        "404":
+          description: Listing not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingResponse"
+      security:
+       -
+        bearerAuth: []
+       -
+        default: []
+      x-auth-type: None
+      x-throttling-tier: GemStoreUpdate20PerMin
+      x-wso2-application-security:
+        security-types:
+         - oauth2
+        optional: false
+    delete:
+      tags:
+       - Listings
+      summary: Delete a listing
+      description: Permanently deletes a gemstone listing owned by the authenticated user. This action cannot be undone.
+      operationId: deleteListing
+      parameters:
+       -
+        name: id
+        in: path
+        description: Unique identifier of the listing to delete
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+        example: 123
+      responses:
+        "200":
+          description: Listing deleted successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseVoid"
+        "401":
+          description: Authentication required
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseVoid"
+        "403":
+          description: User is not allowed to delete the listing
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseVoid"
+        "404":
+          description: Listing not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseVoid"
+      security:
+       -
+        bearerAuth: []
+       -
+        default: []
+      x-auth-type: None
+      x-throttling-tier: GemStoreDelete20PerMin
+      x-wso2-application-security:
+        security-types:
+         - oauth2
+        optional: false
+    patch:
+      tags:
+       - Listings
+      summary: Partially update a listing
+      description: Applies a partial update to an existing gemstone listing owned by the authenticated user. Only provided fields will be modified.
+      operationId: patchListing
+      parameters:
+       -
+        name: id
+        in: path
+        description: Unique identifier of the listing to update
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+        example: 123
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateListingRequest"
+        required: true
+      responses:
+        "200":
+          description: Listing updated successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingResponse"
+        "400":
+          description: Invalid listing information
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingResponse"
+        "401":
+          description: Authentication required
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingResponse"
+        "403":
+          description: User is not allowed to update the listing
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingResponse"
+        "404":
+          description: Listing not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingResponse"
+      security:
+       -
+        bearerAuth: []
+       -
+        default: []
+      x-auth-type: None
+      x-throttling-tier: GemStorePatch20PerMin
+      x-wso2-application-security:
+        security-types:
+         - oauth2
+        optional: false
+  /api/v1/listings:
+    get:
+      tags:
+       - Listings
+      summary: Get all active listings
+      description: Returns active gemstone listings with pagination. Authentication is optional and may be used to include user-specific information.
+      operationId: getActiveListings
+      parameters:
+       -
+        name: page
+        in: query
+        description: Zero-based page number used for pagination
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+          default: 0
+        example: 0
+       -
+        name: size
+        in: query
+        description: Maximum number of listings returned per page
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+          default: 20
+        example: 20
+      responses:
+        "200":
+          description: Listings returned successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponsePageResponseListingCardResponse"
+        "400":
+          description: Invalid pagination parameters
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponsePageResponseListingCardResponse"
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponsePageResponseListingCardResponse"
+      security:
+       -
+        default: []
+      x-auth-type: None
+      x-throttling-tier: GemStoreListing100PerMin
+      x-wso2-application-security:
+        security-types:
+         - oauth2
+        optional: false
+    post:
+      tags:
+       - Listings
+      summary: Create a new listing
+      description: Creates a gemstone listing for the authenticated user.
+      operationId: createListing
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateListingRequest"
+        required: true
+      responses:
+        "201":
+          description: Listing created successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingResponse"
+        "400":
+          description: Invalid listing information
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingResponse"
+        "401":
+          description: Authentication required
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingResponse"
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingResponse"
+      security:
+       -
+        bearerAuth: []
+       -
+        default: []
+      x-auth-type: None
+      x-throttling-tier: GemStorePostListing10PerMin
+      x-wso2-application-security:
+        security-types:
+         - oauth2
+        optional: false
+  /api/v1/listings/{id}/sold:
+    post:
+      tags:
+       - Listings
+      summary: Mark a listing as sold
+      description: Transitions a gemstone listing to the sold state. An optional final sale price can be provided to override the original listing price.
+      operationId: markAsSold
+      parameters:
+       -
+        name: id
+        in: path
+        description: Unique identifier of the listing being sold
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+        example: 123
+       -
+        name: soldPrice
+        in: query
+        description: "Final sale price. When omitted, the original listing price may be used."
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: number
+        example: 150000
+      responses:
+        "200":
+          description: Listing marked as sold
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingResponse"
+        "400":
+          description: Invalid sold price or listing state
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingResponse"
+        "401":
+          description: Authentication required
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingResponse"
+        "403":
+          description: User is not allowed to modify the listing
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingResponse"
+        "404":
+          description: Listing not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingResponse"
+      security:
+       -
+        bearerAuth: []
+       -
+        default: []
+      x-auth-type: None
+      x-throttling-tier: Unlimited
+      x-wso2-application-security:
+        security-types:
+         - oauth2
+        optional: false
+  /api/v1/listings/{id}/reactivate:
+    post:
+      tags:
+       - Listings
+      summary: Reactivate an archived listing
+      description: "Reactivates a previously archived gemstone listing owned by the authenticated user, making it publicly visible again."
+      operationId: reactivateListing
+      parameters:
+       -
+        name: id
+        in: path
+        description: Unique identifier of the listing to reactivate
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+        example: 123
+      responses:
+        "200":
+          description: Listing reactivated successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingResponse"
+        "401":
+          description: Authentication required
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingResponse"
+        "403":
+          description: User is not allowed to reactivate the listing
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingResponse"
+        "404":
+          description: Listing not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingResponse"
+      security:
+       -
+        bearerAuth: []
+       -
+        default: []
+      x-auth-type: None
+      x-throttling-tier: Unlimited
+      x-wso2-application-security:
+        security-types:
+         - oauth2
+        optional: false
+  /api/v1/listings/{id}/archive:
+    post:
+      tags:
+       - Listings
+      summary: Archive a listing
+      description: "Archives an active gemstone listing owned by the authenticated user, removing it from public search results while retaining its data."
+      operationId: archiveListing
+      parameters:
+       -
+        name: id
+        in: path
+        description: Unique identifier of the listing to archive
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+        example: 123
+      responses:
+        "200":
+          description: Listing archived successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseVoid"
+        "401":
+          description: Authentication required
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseVoid"
+        "403":
+          description: User is not allowed to archive the listing
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseVoid"
+        "404":
+          description: Listing not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseVoid"
+      security:
+       -
+        bearerAuth: []
+       -
+        default: []
+      x-auth-type: None
+      x-throttling-tier: Unlimited
+      x-wso2-application-security:
+        security-types:
+         - oauth2
+        optional: false
+  /api/v1/listings/upload:
+    post:
+      tags:
+       - Listings
+      summary: Upload a listing image
+      description: Uploads an image file to be associated with a gemstone listing. The authenticated user must be the owner of the listing. Returns the URL of the uploaded image.
+      operationId: uploadListingImage
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Image file to upload for the listing
+              required:
+               - file
+      responses:
+        "200":
+          description: Image uploaded successfully
+          content:
+            '*/*':
+              schema:
+                type: object
+        "400":
+          description: Invalid or unsupported image file
+          content:
+            '*/*':
+              schema:
+                type: object
+        "401":
+          description: Authentication required
+          content:
+            '*/*':
+              schema:
+                type: object
+        "500":
+          description: Image upload failed
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+       -
+        bearerAuth: []
+       -
+        default: []
+      x-auth-type: None
+      x-throttling-tier: GemStoreSearch5PerMin
+      x-wso2-application-security:
+        security-types:
+         - oauth2
+        optional: false
+  /api/v1/listings/search:
+    get:
+      tags:
+       - Listings
+      summary: Search listings via query parameters
+      description: "Searches and filters active gemstone listings using query parameters. Supports filtering by gemstone attributes, price range, carat weight and sorting. Authentication is optional."
+      operationId: searchListings
+      parameters:
+       -
+        name: query
+        in: query
+        description: Text matched against searchable listing fields
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+        example: blue sapphire
+       -
+        name: gemstoneTypeId
+        in: query
+        description: Unique identifier of the gemstone type
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+        example: 1
+       -
+        name: colorId
+        in: query
+        description: Unique identifier of the gemstone color
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+        example: 2
+       -
+        name: colorQualityId
+        in: query
+        description: Unique identifier of the color quality
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+        example: 3
+       -
+        name: clarityId
+        in: query
+        description: Unique identifier of the clarity grade
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+        example: 4
+       -
+        name: cutId
+        in: query
+        description: Unique identifier of the gemstone cut
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+        example: 5
+       -
+        name: originId
+        in: query
+        description: Unique identifier of the gemstone origin
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+        example: 6
+       -
+        name: treatmentId
+        in: query
+        description: Unique identifier of the gemstone treatment
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+        example: 7
+       -
+        name: minPrice
+        in: query
+        description: Minimum listing price included in the results
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: number
+        example: 1000
+       -
+        name: maxPrice
+        in: query
+        description: Maximum listing price included in the results
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: number
+        example: 500000
+       -
+        name: minCarat
+        in: query
+        description: Minimum gemstone weight in carats
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: number
+        example: 0.5
+       -
+        name: maxCarat
+        in: query
+        description: Maximum gemstone weight in carats
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: number
+        example: 10
+       -
+        name: sortBy
+        in: query
+        description: Listing field used to sort the results
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          default: createdAt
+        example: createdAt
+       -
+        name: sortDirection
+        in: query
+        description: Sort direction applied to the results
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          default: DESC
+        example: DESC
+       -
+        name: page
+        in: query
+        description: Zero-based page number used for pagination
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+          default: 0
+        example: 0
+       -
+        name: size
+        in: query
+        description: Maximum number of listings returned per page
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+          default: 20
+        example: 20
+      responses:
+        "200":
+          description: Search results returned successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponsePageResponseListingCardResponse"
+        "400":
+          description: Invalid search parameters
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponsePageResponseListingCardResponse"
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponsePageResponseListingCardResponse"
+      security:
+       -
+        default: []
+      x-auth-type: None
+      x-throttling-tier: GemStoreSearch30PerMin
+      x-wso2-application-security:
+        security-types:
+         - oauth2
+        optional: false
+    post:
+      tags:
+       - Listings
+      summary: Search listings via request body
+      description: Searches and filters active gemstone listings using a structured JSON request body. Useful for complex filter combinations. Authentication is optional.
+      operationId: searchListingsPost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ListingSearchRequest"
+        required: true
+      responses:
+        "200":
+          description: Search results returned successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponsePageResponseListingCardResponse"
+        "400":
+          description: Invalid search request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponsePageResponseListingCardResponse"
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponsePageResponseListingCardResponse"
+      security:
+       -
+        default: []
+      x-auth-type: None
+      x-throttling-tier: Unlimited
+      x-wso2-application-security:
+        security-types:
+         - oauth2
+        optional: false
+  /api/v1/listings/{id}/detail:
+    get:
+      tags:
+       - Listings
+      summary: Get listing detail by ID
+      description: "Retrieves the full detail view of a gemstone listing by its unique identifier, including extended attributes and metadata. Authentication is optional."
+      operationId: getListingDetail
+      parameters:
+       -
+        name: id
+        in: path
+        description: Unique identifier of the listing
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+        example: 123
+      responses:
+        "200":
+          description: Listing details returned successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingDetailResponse"
+        "404":
+          description: Listing not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingDetailResponse"
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingDetailResponse"
+      security:
+       -
+        default: []
+      x-auth-type: None
+      x-throttling-tier: Unlimited
+      x-wso2-application-security:
+        security-types:
+         - oauth2
+        optional: false
+  /api/v1/listings/seller/{sellerId}:
+    get:
+      tags:
+       - Listings
+      summary: Get listings by seller
+      description: Retrieves a paginated list of active gemstone listings belonging to a specific seller. Authentication is optional.
+      operationId: getListingsBySeller
+      parameters:
+       -
+        name: sellerId
+        in: path
+        description: Unique identifier of the seller
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+        example: 45
+       -
+        name: page
+        in: query
+        description: Zero-based page number used for pagination
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+          default: 0
+        example: 0
+       -
+        name: size
+        in: query
+        description: Maximum number of listings returned per page
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+          default: 20
+        example: 20
+      responses:
+        "200":
+          description: Seller listings returned successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponsePageResponseListingCardResponse"
+        "404":
+          description: Seller not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponsePageResponseListingCardResponse"
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponsePageResponseListingCardResponse"
+      security:
+       -
+        default: []
+      x-auth-type: None
+      x-throttling-tier: Unlimited
+      x-wso2-application-security:
+        security-types:
+         - oauth2
+        optional: false
+  /api/v1/listings/public/{slug}:
+    get:
+      tags:
+       - Listings
+      summary: Get listing by slug
+      description: Retrieves the full detail view of a gemstone listing using its human-readable URL slug. Authentication is optional.
+      operationId: getBySlug
+      parameters:
+       -
+        name: slug
+        in: path
+        description: Human-readable unique slug of the listing
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: natural-blue-sapphire-125ct
+      responses:
+        "200":
+          description: Listing returned successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingDetailResponse"
+        "404":
+          description: Listing not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingDetailResponse"
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponseListingDetailResponse"
+      security:
+       -
+        default: []
+      x-auth-type: None
+      x-throttling-tier: Unlimited
+      x-wso2-application-security:
+        security-types:
+         - oauth2
+        optional: false
+  /api/v1/listings/my:
+    get:
+      tags:
+       - Listings
+      summary: Get authenticated user's listings
+      description: Retrieves a paginated list of gemstone listings owned by the currently authenticated user. Supports optional filtering by listing status.
+      operationId: getMyListings
+      parameters:
+       -
+        name: status
+        in: query
+        description: Optional listing status used to filter results
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+        example: ACTIVE
+       -
+        name: page
+        in: query
+        description: Zero-based page number used for pagination
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+          default: 0
+        example: 0
+       -
+        name: size
+        in: query
+        description: Maximum number of listings returned per page
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+          default: 20
+        example: 20
+      responses:
+        "200":
+          description: User listings returned successfully
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponsePageResponseListingCardResponse"
+        "401":
+          description: Authentication required
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponsePageResponseListingCardResponse"
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiResponsePageResponseListingCardResponse"
+      security:
+       -
+        bearerAuth: []
+       -
+        default: []
+      x-auth-type: None
+      x-throttling-tier: Unlimited
+      x-wso2-application-security:
+        security-types:
+         - oauth2
+        optional: false
+components:
+  schemas:
+    UpdateListingRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 255
+          minLength: 5
+        description:
+          type: string
+          maxLength: 5000
+          minLength: 0
+        gemstoneTypeId:
+          type: integer
+          format: int32
+        caratWeight:
+          type: number
+          maximum: 10000
+          minimum: 0.01
+        price:
+          type: number
+          minimum: 1
+        currency:
+          type: string
+        colorId:
+          type: integer
+          format: int32
+        colorQualityId:
+          type: integer
+          format: int32
+        clarityId:
+          type: integer
+          format: int32
+        cutId:
+          type: integer
+          format: int32
+        originId:
+          type: integer
+          format: int32
+        treatmentId:
+          type: integer
+          format: int32
+        lengthMm:
+          type: number
+        widthMm:
+          type: number
+        depthMm:
+          type: number
+        isCertified:
+          type: boolean
+        certificateInfo:
+          type: string
+        imageUrls:
+          type: array
+          items:
+            type: string
+        primaryImageIndex:
+          type: integer
+          format: int32
+    ApiResponseListingResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/ListingResponse"
+        timestamp:
+          type: string
+          format: date-time
+    ListingImageResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        imageUrl:
+          type: string
+        isPrimary:
+          type: boolean
+        displayOrder:
+          type: integer
+          format: int32
+    ListingResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        listingNumber:
+          type: string
+        slug:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        gemstoneType:
+          $ref: "#/components/schemas/LookupDTO"
+        caratWeight:
+          type: number
+        color:
+          $ref: "#/components/schemas/LookupDTO"
+        colorQuality:
+          $ref: "#/components/schemas/LookupDTO"
+        clarity:
+          $ref: "#/components/schemas/LookupDTO"
+        cut:
+          $ref: "#/components/schemas/LookupDTO"
+        origin:
+          $ref: "#/components/schemas/LookupDTO"
+        treatment:
+          $ref: "#/components/schemas/LookupDTO"
+        lengthMm:
+          type: number
+        widthMm:
+          type: number
+        depthMm:
+          type: number
+        price:
+          type: number
+        currency:
+          type: string
+        pricePerCarat:
+          type: number
+        isCertified:
+          type: boolean
+        certificateInfo:
+          type: string
+        status:
+          type: string
+        completenessScore:
+          type: integer
+          format: int32
+        viewsCount:
+          type: integer
+          format: int32
+        favoritesCount:
+          type: integer
+          format: int32
+        isSold:
+          type: boolean
+        soldPrice:
+          type: number
+        soldAt:
+          type: string
+          format: date-time
+        images:
+          type: array
+          items:
+            $ref: "#/components/schemas/ListingImageResponse"
+        seller:
+          $ref: "#/components/schemas/SellerInfo"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        isFavorited:
+          type: boolean
+        likesCount:
+          type: integer
+          format: int32
+        isLiked:
+          type: boolean
+    LookupDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+        category:
+          type: string
+        rank:
+          type: integer
+          format: int32
+    SellerInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        displayName:
+          type: string
+        username:
+          type: string
+        avatarUrl:
+          type: string
+        listingsCount:
+          type: integer
+          format: int32
+    CreateListingRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 255
+          minLength: 5
+        description:
+          type: string
+          maxLength: 5000
+          minLength: 0
+        gemstoneTypeId:
+          type: integer
+          format: int32
+        caratWeight:
+          type: number
+          maximum: 10000
+          minimum: 0.01
+        price:
+          type: number
+          minimum: 1
+        currency:
+          type: string
+        colorId:
+          type: integer
+          format: int32
+        colorQualityId:
+          type: integer
+          format: int32
+        clarityId:
+          type: integer
+          format: int32
+        cutId:
+          type: integer
+          format: int32
+        originId:
+          type: integer
+          format: int32
+        treatmentId:
+          type: integer
+          format: int32
+        lengthMm:
+          type: number
+          minimum: 0.1
+        widthMm:
+          type: number
+          minimum: 0.1
+        depthMm:
+          type: number
+          minimum: 0.1
+        isCertified:
+          type: boolean
+        certificateInfo:
+          type: string
+          maxLength: 255
+          minLength: 0
+        imageUrls:
+          type: array
+          items:
+            type: string
+          maxItems: 10
+          minItems: 0
+        primaryImageIndex:
+          type: integer
+          format: int32
+      required:
+       - caratWeight
+       - gemstoneTypeId
+       - price
+       - title
+    ApiResponseVoid:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data: {}
+        timestamp:
+          type: string
+          format: date-time
+    ListingSearchRequest:
+      type: object
+      properties:
+        query:
+          type: string
+        gemstoneTypeId:
+          type: integer
+          format: int32
+        colorId:
+          type: integer
+          format: int32
+        colorQualityId:
+          type: integer
+          format: int32
+        clarityId:
+          type: integer
+          format: int32
+        cutId:
+          type: integer
+          format: int32
+        originId:
+          type: integer
+          format: int32
+        treatmentId:
+          type: integer
+          format: int32
+        minPrice:
+          type: number
+        maxPrice:
+          type: number
+        minCarat:
+          type: number
+        maxCarat:
+          type: number
+        sortBy:
+          type: string
+        sortDirection:
+          type: string
+        page:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+    ApiResponsePageResponseListingCardResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/PageResponseListingCardResponse"
+        timestamp:
+          type: string
+          format: date-time
+    ListingCardResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        listingNumber:
+          type: string
+        slug:
+          type: string
+        title:
+          type: string
+        imageUrls:
+          type: array
+          items:
+            type: string
+        primaryImageUrl:
+          type: string
+        gemstoneType:
+          type: string
+        caratWeight:
+          type: number
+        color:
+          type: string
+        colorQuality:
+          type: string
+        clarity:
+          type: string
+        cut:
+          type: string
+        origin:
+          type: string
+        treatment:
+          type: string
+        price:
+          type: number
+        currency:
+          type: string
+        pricePerCarat:
+          type: number
+        viewsCount:
+          type: integer
+          format: int32
+        likesCount:
+          type: integer
+          format: int32
+        favoritesCount:
+          type: integer
+          format: int32
+        status:
+          type: string
+        isSold:
+          type: boolean
+        isCertified:
+          type: boolean
+        sellerId:
+          type: integer
+          format: int64
+        sellerName:
+          type: string
+        sellerUsername:
+          type: string
+        sellerAvatar:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        isLiked:
+          type: boolean
+        isFavorited:
+          type: boolean
+        lengthMm:
+          type: number
+        widthMm:
+          type: number
+        depthMm:
+          type: number
+    PageResponseListingCardResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/ListingCardResponse"
+        page:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        first:
+          type: boolean
+        last:
+          type: boolean
+        hasNext:
+          type: boolean
+        hasPrevious:
+          type: boolean
+    ApiResponseListingDetailResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/ListingDetailResponse"
+        timestamp:
+          type: string
+          format: date-time
+    ListingDetailResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        listingNumber:
+          type: string
+        slug:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        gemstoneType:
+          $ref: "#/components/schemas/LookupDTO"
+        caratWeight:
+          type: number
+        color:
+          $ref: "#/components/schemas/LookupDTO"
+        colorQuality:
+          $ref: "#/components/schemas/LookupDTO"
+        clarity:
+          $ref: "#/components/schemas/LookupDTO"
+        cut:
+          $ref: "#/components/schemas/LookupDTO"
+        origin:
+          $ref: "#/components/schemas/LookupDTO"
+        treatment:
+          $ref: "#/components/schemas/LookupDTO"
+        lengthMm:
+          type: number
+        widthMm:
+          type: number
+        depthMm:
+          type: number
+        price:
+          type: number
+        currency:
+          type: string
+        pricePerCarat:
+          type: number
+        isCertified:
+          type: boolean
+        certificateInfo:
+          type: string
+        status:
+          type: string
+        completenessScore:
+          type: integer
+          format: int32
+        viewsCount:
+          type: integer
+          format: int32
+        likesCount:
+          type: integer
+          format: int32
+        favoritesCount:
+          type: integer
+          format: int32
+        isSold:
+          type: boolean
+        soldPrice:
+          type: number
+        soldAt:
+          type: string
+          format: date-time
+        daysToSell:
+          type: integer
+          format: int32
+        images:
+          type: array
+          items:
+            $ref: "#/components/schemas/ListingImageResponse"
+        seller:
+          $ref: "#/components/schemas/SellerInfo"
+        priceHistory:
+          type: array
+          items:
+            $ref: "#/components/schemas/PriceHistoryItem"
+        relatedListings:
+          type: array
+          items:
+            $ref: "#/components/schemas/ListingCardResponse"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        isLiked:
+          type: boolean
+        isFavorited:
+          type: boolean
+        isOwner:
+          type: boolean
+    PriceHistoryItem:
+      type: object
+      properties:
+        oldPrice:
+          type: number
+        newPrice:
+          type: number
+        changeReason:
+          type: string
+        changedAt:
+          type: string
+          format: date-time
+  securitySchemes:
+    bearerAuth:
+      type: http
+      description: Enter the Gem Store JWT token
+      scheme: bearer
+      bearerFormat: JWT
+    default:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://test.com
+          scopes: {}
+x-wso2-api-key-header: ApiKey
+x-wso2-auth-header: Authorization
+x-wso2-cors:
+  corsConfigurationEnabled: true
+  accessControlAllowOrigins:
+   - http://localhost:5173
+  accessControlAllowCredentials: false
+  accessControlAllowHeaders:
+   - authorization
+   - Content-Type
+   - Accept
+   - Origin
+  accessControlAllowMethods:
+   - GET
+   - PUT
+   - POST
+   - DELETE
+   - PATCH
+   - OPTIONS
+x-wso2-production-endpoints:
+  urls:
+   - http://localhost:8080
+  type: http
+x-wso2-sandbox-endpoints:
+  urls:
+   - http://localhost:8080
+  type: http
+x-wso2-basePath: /gemstore/1.0.0
+x-wso2-transports:
+ - http
+ - https
+x-wso2-application-security:
+  security-types:
+   - oauth2
+  optional: false
+x-wso2-response-cache:
+  enabled: false
+  cacheTimeoutInSeconds: 300

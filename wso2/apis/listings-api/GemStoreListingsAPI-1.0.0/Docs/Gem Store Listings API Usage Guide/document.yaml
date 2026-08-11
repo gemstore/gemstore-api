@@ -1,0 +1,9 @@
+type: document
+version: v4.7.0
+data:
+  documentId: 29c117a1-230b-4cd9-a80f-c9afd5a51f7a
+  name: Gem Store Listings API Usage Guide
+  type: HOWTO
+  summary: The Gem Store Listings API provides marketplace operations for gemstone listings.
+  sourceType: MARKDOWN
+  visibility: API_LEVEL

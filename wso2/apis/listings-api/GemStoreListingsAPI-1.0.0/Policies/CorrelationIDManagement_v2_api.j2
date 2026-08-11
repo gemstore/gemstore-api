@@ -1,0 +1,23 @@
+<filter
+    source="get-property('transport', 'X-Correlation-ID')"
+    regex=".+">
+
+    <then>
+        <!-- Client already supplied a correlation ID.
+             Keep the same value. -->
+        <property
+            name="X-Correlation-ID"
+            expression="get-property('transport', 'X-Correlation-ID')"
+            scope="transport"/>
+    </then>
+
+    <else>
+        <!-- Client did not supply one.
+             Generate one from WSO2 MessageID. -->
+        <property
+            name="X-Correlation-ID"
+            expression="get-property('MessageID')"
+            scope="transport"/>
+    </else>
+
+</filter>

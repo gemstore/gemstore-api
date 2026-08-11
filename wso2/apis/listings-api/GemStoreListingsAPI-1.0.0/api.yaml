@@ -1,0 +1,358 @@
+type: api
+version: v4.7.0
+data:
+  id: 98780ac1-1b2b-4931-b22e-afccbc8b5da7
+  name: GemStoreListingsAPI
+  displayName: Gem Store Listings API
+  description: "REST API for discovering, creating, updating, searching, and managing gemstone marketplace listings in the Gem Store platform."
+  context: /gemstore
+  version: 1.0.0
+  provider: admin
+  lifeCycleStatus: PUBLISHED
+  responseCachingEnabled: false
+  cacheTimeout: 300
+  hasThumbnail: false
+  isDefaultVersion: false
+  isRevision: false
+  revisionId: 0
+  enableSchemaValidation: false
+  enableSubscriberVerification: false
+  type: HTTP
+  audiences:
+   - all
+  transport:
+   - http
+   - https
+  tags:
+   - listings
+   - marketplace
+   - gemstones
+   - spring-boot
+   - e-commerce
+  policies:
+   - Unlimited
+  organizationPolicies: []
+  authorizationHeader: Authorization
+  apiKeyHeader: ApiKey
+  securityScheme:
+   - oauth_basic_auth_api_key_mandatory
+   - oauth2
+  visibility: PUBLIC
+  visibleRoles: []
+  visibleTenants: []
+  visibleOrganizations:
+   - none
+  mediationPolicies: []
+  apiPolicies:
+    request:
+     -
+      policyName: CorrelationIDManagement
+      policyVersion: v2
+      policyType: api
+      policyId: 6944c390-c1f9-428b-a268-1d7199f131a5
+      parameters: {}
+    response: []
+    fault: []
+  apiHubPolicies: []
+  subscriptionAvailability: CURRENT_TENANT
+  subscriptionAvailableTenants: []
+  additionalProperties: []
+  additionalPropertiesMap: {}
+  accessControl: NONE
+  accessControlRoles: []
+  businessInformation:
+    businessOwner: Mohammed Musharraf
+    businessOwnerEmail: mnmmusharraf@gmail.com
+    technicalOwner: Mohammed Musharraf
+    technicalOwnerEmail: mnmmusharraf@gmail.com
+  corsConfiguration:
+    corsConfigurationEnabled: true
+    accessControlAllowOrigins:
+     - http://localhost:5173
+    accessControlAllowCredentials: false
+    accessControlAllowHeaders:
+     - authorization
+     - Content-Type
+     - Accept
+     - Origin
+    accessControlAllowMethods:
+     - GET
+     - PUT
+     - POST
+     - DELETE
+     - PATCH
+     - OPTIONS
+  websubSubscriptionConfiguration:
+    enable: false
+    secret: ""
+    signingAlgorithm: SHA1
+    signatureHeader: x-hub-signature
+  createdTime: "1786192697397"
+  lastUpdatedTimestamp: "1786356955390"
+  lastUpdatedTime: 2026-08-10 15:45:55.39
+  endpointConfig:
+    endpoint_type: http
+    sandbox_endpoints:
+      config:
+        retryDelay: "0"
+        actionDuration: "3000"
+        retryTimeOut: "0"
+        suspendDuration: "5000"
+        suspendErrorCode:
+         - "101503"
+         - "101504"
+         - "101505"
+         - "101507"
+         - "101508"
+        retryErroCode:
+         - "101504"
+         - "101505"
+        factor: "2"
+        suspendMaxDuration: "30000"
+        actionSelect: fault
+      url: http://localhost:8080
+    production_endpoints:
+      config:
+        retryDelay: "0"
+        actionDuration: "3000"
+        retryTimeOut: "0"
+        suspendDuration: "5000"
+        suspendErrorCode:
+         - "101503"
+         - "101504"
+         - "101505"
+         - "101507"
+         - "101508"
+        retryErroCode:
+         - "101504"
+         - "101505"
+        factor: "2"
+        suspendMaxDuration: "30000"
+        actionSelect: fault
+      url: http://localhost:8080
+  endpointImplementationType: ENDPOINT
+  subtypeConfiguration:
+    subtype: DEFAULT
+  scopes: []
+  operations:
+   -
+    id: ""
+    target: "/api/v1/listings/{id}"
+    verb: GET
+    authType: None
+    throttlingPolicy: Unlimited
+    scopes: []
+    usedProductIds: []
+    operationPolicies:
+      request: []
+      response: []
+      fault: []
+    operationHubPolicies: []
+   -
+    id: ""
+    target: "/api/v1/listings/{id}"
+    verb: PUT
+    authType: None
+    throttlingPolicy: GemStoreUpdate20PerMin
+    scopes: []
+    usedProductIds: []
+    operationPolicies:
+      request: []
+      response: []
+      fault: []
+    operationHubPolicies: []
+   -
+    id: ""
+    target: "/api/v1/listings/{id}"
+    verb: DELETE
+    authType: None
+    throttlingPolicy: GemStoreDelete20PerMin
+    scopes: []
+    usedProductIds: []
+    operationPolicies:
+      request: []
+      response: []
+      fault: []
+    operationHubPolicies: []
+   -
+    id: ""
+    target: "/api/v1/listings/{id}"
+    verb: PATCH
+    authType: None
+    throttlingPolicy: GemStorePatch20PerMin
+    scopes: []
+    usedProductIds: []
+    operationPolicies:
+      request: []
+      response: []
+      fault: []
+    operationHubPolicies: []
+   -
+    id: ""
+    target: /api/v1/listings
+    verb: GET
+    authType: None
+    throttlingPolicy: GemStoreListing100PerMin
+    scopes: []
+    usedProductIds: []
+    operationPolicies:
+      request: []
+      response: []
+      fault: []
+    operationHubPolicies: []
+   -
+    id: ""
+    target: /api/v1/listings
+    verb: POST
+    authType: None
+    throttlingPolicy: GemStorePostListing10PerMin
+    scopes: []
+    usedProductIds: []
+    operationPolicies:
+      request: []
+      response: []
+      fault: []
+    operationHubPolicies: []
+   -
+    id: ""
+    target: "/api/v1/listings/{id}/sold"
+    verb: POST
+    authType: None
+    throttlingPolicy: Unlimited
+    scopes: []
+    usedProductIds: []
+    operationPolicies:
+      request: []
+      response: []
+      fault: []
+    operationHubPolicies: []
+   -
+    id: ""
+    target: "/api/v1/listings/{id}/reactivate"
+    verb: POST
+    authType: None
+    throttlingPolicy: Unlimited
+    scopes: []
+    usedProductIds: []
+    operationPolicies:
+      request: []
+      response: []
+      fault: []
+    operationHubPolicies: []
+   -
+    id: ""
+    target: "/api/v1/listings/{id}/archive"
+    verb: POST
+    authType: None
+    throttlingPolicy: Unlimited
+    scopes: []
+    usedProductIds: []
+    operationPolicies:
+      request: []
+      response: []
+      fault: []
+    operationHubPolicies: []
+   -
+    id: ""
+    target: /api/v1/listings/upload
+    verb: POST
+    authType: None
+    throttlingPolicy: GemStoreSearch5PerMin
+    scopes: []
+    usedProductIds: []
+    operationPolicies:
+      request: []
+      response: []
+      fault: []
+    operationHubPolicies: []
+   -
+    id: ""
+    target: /api/v1/listings/search
+    verb: GET
+    authType: None
+    throttlingPolicy: GemStoreSearch30PerMin
+    scopes: []
+    usedProductIds: []
+    operationPolicies:
+      request: []
+      response: []
+      fault: []
+    operationHubPolicies: []
+   -
+    id: ""
+    target: /api/v1/listings/search
+    verb: POST
+    authType: None
+    throttlingPolicy: Unlimited
+    scopes: []
+    usedProductIds: []
+    operationPolicies:
+      request: []
+      response: []
+      fault: []
+    operationHubPolicies: []
+   -
+    id: ""
+    target: "/api/v1/listings/{id}/detail"
+    verb: GET
+    authType: None
+    throttlingPolicy: Unlimited
+    scopes: []
+    usedProductIds: []
+    operationPolicies:
+      request: []
+      response: []
+      fault: []
+    operationHubPolicies: []
+   -
+    id: ""
+    target: "/api/v1/listings/seller/{sellerId}"
+    verb: GET
+    authType: None
+    throttlingPolicy: Unlimited
+    scopes: []
+    usedProductIds: []
+    operationPolicies:
+      request: []
+      response: []
+      fault: []
+    operationHubPolicies: []
+   -
+    id: ""
+    target: "/api/v1/listings/public/{slug}"
+    verb: GET
+    authType: None
+    throttlingPolicy: Unlimited
+    scopes: []
+    usedProductIds: []
+    operationPolicies:
+      request: []
+      response: []
+      fault: []
+    operationHubPolicies: []
+   -
+    id: ""
+    target: /api/v1/listings/my
+    verb: GET
+    authType: None
+    throttlingPolicy: Unlimited
+    scopes: []
+    usedProductIds: []
+    operationPolicies:
+      request: []
+      response: []
+      fault: []
+    operationHubPolicies: []
+  categories: []
+  keyManagers:
+   - all
+  advertiseInfo:
+    advertised: false
+    apiOwner: admin
+    vendor: WSO2
+  gatewayVendor: wso2
+  gatewayType: wso2/synapse
+  initiatedFromGateway: false
+  asyncTransportProtocols: []
+  egress: false
+  organizationId: carbon.super
