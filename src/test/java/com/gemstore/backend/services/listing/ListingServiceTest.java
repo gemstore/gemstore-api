@@ -11,11 +11,13 @@ import com.gemstore.backend.mappers.listing.ListingMapper;
 import com.gemstore.backend.mappers.listing.ListingPriceHistoryMapper;
 import com.gemstore.backend.repositories.listing.*;
 import com.gemstore.backend.repositories.user.UserRepository;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -31,18 +33,41 @@ import static org.mockito.Mockito.*;
 @DisplayName("ListingService - Unit Tests")
 class ListingServiceTest {
 
-    @Mock private ListingRepository listingRepository;
-    @Mock private ListingImageRepository listingImageRepository;
-    @Mock private ListingPriceHistoryRepository priceHistoryRepository;
-    @Mock private FavoriteRepository favoriteRepository;
-    @Mock private UserRepository userRepository;
-    @Mock private LookupService lookupService;
-    @Mock private ListingImageService listingImageService;
-    @Mock private ListingViewService listingViewService;
-    @Mock private LikeService likeService;
-    @Mock private FavoriteService favoriteService;
-    @Mock private ListingMapper listingMapper;
-    @Mock private ListingPriceHistoryMapper priceHistoryMapper;
+    @Mock
+    private ListingRepository listingRepository;
+
+    @Mock
+    private ListingImageRepository listingImageRepository;
+
+    @Mock
+    private ListingPriceHistoryRepository priceHistoryRepository;
+
+    @Mock
+    private FavoriteRepository favoriteRepository;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private LookupService lookupService;
+
+    @Mock
+    private ListingImageService listingImageService;
+
+    @Mock
+    private ListingViewService listingViewService;
+
+    @Mock
+    private LikeService likeService;
+
+    @Mock
+    private FavoriteService favoriteService;
+
+    @Mock
+    private ListingMapper listingMapper;
+
+    @Mock
+    private ListingPriceHistoryMapper priceHistoryMapper;
 
     @InjectMocks
     private ListingService listingService;
@@ -54,6 +79,7 @@ class ListingServiceTest {
 
     @BeforeEach
     void setUp() {
+
         seller = new User();
         seller.setId(1L);
         seller.setUsername("seller");
@@ -76,6 +102,10 @@ class ListingServiceTest {
         listingResponse.setTitle("Blue Sapphire");
     }
 
+    // ============================================================
+    // GET LISTING BY ID
+    // ============================================================
+
     @Nested
     @DisplayName("getListingById()")
     class GetListingById {
@@ -83,39 +113,89 @@ class ListingServiceTest {
         @Test
         @DisplayName("TC-LST-001: Should return listing by ID")
         void shouldReturnListing() {
-            when(listingRepository.findById(100L)).thenReturn(Optional.of(listing));
-            when(listingMapper.toResponse(listing)).thenReturn(listingResponse);
 
-            ListingResponse result = listingService.getListingById(100L, null);
+            when(listingRepository.findById(100L))
+                    .thenReturn(Optional.of(listing));
 
-            assertThat(result).isNotNull();
-            assertThat(result.getTitle()).isEqualTo("Blue Sapphire");
+            when(listingMapper.toResponse(listing))
+                    .thenReturn(listingResponse);
+
+            ListingResponse result =
+                    listingService.getListingById(100L, null);
+
+            assertThat(result)
+                    .isNotNull();
+
+            assertThat(result.getTitle())
+                    .isEqualTo("Blue Sapphire");
+
+            verify(listingRepository)
+                    .findById(100L);
+
+            verify(listingMapper)
+                    .toResponse(listing);
         }
 
         @Test
         @DisplayName("TC-LST-002: Should throw when listing not found")
         void shouldThrowWhenNotFound() {
-            when(listingRepository.findById(999L)).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> listingService.getListingById(999L, null))
+            when(listingRepository.findById(999L))
+                    .thenReturn(Optional.empty());
+
+            assertThatThrownBy(() ->
+                    listingService.getListingById(999L, null)
+            )
                     .isInstanceOf(ResourceNotFoundException.class)
                     .hasMessageContaining("Listing not found");
+
+            verify(listingRepository)
+                    .findById(999L);
+
+            verifyNoInteractions(listingMapper);
         }
 
         @Test
-        @DisplayName("TC-LST-003: Should set like/favorite status when userId provided")
+        @DisplayName(
+                "TC-LST-003: Should set like/favorite status when userId provided"
+        )
         void shouldSetLikeFavoriteStatus() {
-            when(listingRepository.findById(100L)).thenReturn(Optional.of(listing));
-            when(listingMapper.toResponse(listing)).thenReturn(listingResponse);
-            when(likeService.isLiked(100L, 1L)).thenReturn(true);
-            when(favoriteService.isFavorited(100L, 1L)).thenReturn(false);
 
-            ListingResponse result = listingService.getListingById(100L, 1L);
+            when(listingRepository.findById(100L))
+                    .thenReturn(Optional.of(listing));
 
-            verify(likeService).isLiked(100L, 1L);
-            verify(favoriteService).isFavorited(100L, 1L);
+            when(listingMapper.toResponse(listing))
+                    .thenReturn(listingResponse);
+
+            when(likeService.isLiked(100L, 1L))
+                    .thenReturn(true);
+
+            when(favoriteService.isFavorited(100L, 1L))
+                    .thenReturn(false);
+
+            ListingResponse result =
+                    listingService.getListingById(100L, 1L);
+
+            assertThat(result)
+                    .isNotNull();
+
+            assertThat(result.getIsLiked())
+                    .isTrue();
+
+            assertThat(result.getIsFavorited())
+                    .isFalse();
+
+            verify(likeService)
+                    .isLiked(100L, 1L);
+
+            verify(favoriteService)
+                    .isFavorited(100L, 1L);
         }
     }
+
+    // ============================================================
+    // UPDATE LISTING
+    // ============================================================
 
     @Nested
     @DisplayName("updateListing()")
@@ -124,24 +204,53 @@ class ListingServiceTest {
         @Test
         @DisplayName("TC-LST-004: Should reject update by non-owner")
         void shouldRejectNonOwner() {
-            when(listingRepository.findById(100L)).thenReturn(Optional.of(listing));
 
-            assertThatThrownBy(() -> listingService.updateListing(100L, null, 2L))
+            when(listingRepository.findById(100L))
+                    .thenReturn(Optional.of(listing));
+
+            assertThatThrownBy(() ->
+                    listingService.updateListing(
+                            100L,
+                            null,
+                            2L
+                    )
+            )
                     .isInstanceOf(UnauthorizedException.class)
-                    .hasMessageContaining("only update your own");
+                    .hasMessageContaining(
+                            "only update your own"
+                    );
+
+            verify(listingRepository, never())
+                    .save(any(Listing.class));
         }
 
         @Test
         @DisplayName("TC-LST-005: Should reject update of sold listing")
         void shouldRejectSoldListing() {
-            listing.setIsSold(true);
-            when(listingRepository.findById(100L)).thenReturn(Optional.of(listing));
 
-            assertThatThrownBy(() -> listingService.updateListing(100L, null, 1L))
+            listing.setIsSold(true);
+
+            when(listingRepository.findById(100L))
+                    .thenReturn(Optional.of(listing));
+
+            assertThatThrownBy(() ->
+                    listingService.updateListing(
+                            100L,
+                            null,
+                            1L
+                    )
+            )
                     .isInstanceOf(IllegalStateException.class)
                     .hasMessageContaining("sold");
+
+            verify(listingRepository, never())
+                    .save(any(Listing.class));
         }
     }
+
+    // ============================================================
+    // MARK AS SOLD
+    // ============================================================
 
     @Nested
     @DisplayName("markAsSold()")
@@ -150,49 +259,119 @@ class ListingServiceTest {
         @Test
         @DisplayName("TC-LST-006: Should mark listing as sold")
         void shouldMarkAsSold() {
-            when(listingRepository.findById(100L)).thenReturn(Optional.of(listing));
-            when(listingRepository.save(any())).thenReturn(listing);
-            when(listingMapper.toResponse(listing)).thenReturn(listingResponse);
 
-            ListingResponse result = listingService.markAsSold(100L, new BigDecimal("45000"), 1L);
+            when(listingRepository.findById(100L))
+                    .thenReturn(Optional.of(listing));
 
-            assertThat(listing.getIsSold()).isTrue();
-            assertThat(listing.getStatus()).isEqualTo(ListingStatus.SOLD);
-            assertThat(listing.getSoldPrice()).isEqualTo(new BigDecimal("45000"));
+            when(listingRepository.save(any(Listing.class)))
+                    .thenReturn(listing);
+
+            when(listingMapper.toResponse(listing))
+                    .thenReturn(listingResponse);
+
+            ListingResponse result =
+                    listingService.markAsSold(
+                            100L,
+                            new BigDecimal("45000"),
+                            1L
+                    );
+
+            assertThat(result)
+                    .isNotNull();
+
+            assertThat(listing.getIsSold())
+                    .isTrue();
+
+            assertThat(listing.getStatus())
+                    .isEqualTo(ListingStatus.SOLD);
+
+            assertThat(listing.getSoldPrice())
+                    .isEqualByComparingTo("45000");
+
+            assertThat(listing.getSoldAt())
+                    .isNotNull();
+
+            verify(listingRepository)
+                    .save(listing);
         }
 
         @Test
-        @DisplayName("TC-LST-007: Should use listing price when soldPrice is null")
+        @DisplayName(
+                "TC-LST-007: Should use listing price when soldPrice is null"
+        )
         void shouldUseListingPriceWhenNull() {
-            when(listingRepository.findById(100L)).thenReturn(Optional.of(listing));
-            when(listingRepository.save(any())).thenReturn(listing);
-            when(listingMapper.toResponse(listing)).thenReturn(listingResponse);
 
-            listingService.markAsSold(100L, null, 1L);
+            when(listingRepository.findById(100L))
+                    .thenReturn(Optional.of(listing));
 
-            assertThat(listing.getSoldPrice()).isEqualTo(new BigDecimal("50000.00"));
+            when(listingRepository.save(any(Listing.class)))
+                    .thenReturn(listing);
+
+            when(listingMapper.toResponse(listing))
+                    .thenReturn(listingResponse);
+
+            listingService.markAsSold(
+                    100L,
+                    null,
+                    1L
+            );
+
+            assertThat(listing.getSoldPrice())
+                    .isEqualByComparingTo("50000.00");
+
+            assertThat(listing.getStatus())
+                    .isEqualTo(ListingStatus.SOLD);
         }
 
         @Test
         @DisplayName("TC-LST-008: Should reject if not owner")
         void shouldRejectIfNotOwner() {
-            when(listingRepository.findById(100L)).thenReturn(Optional.of(listing));
 
-            assertThatThrownBy(() -> listingService.markAsSold(100L, null, 2L))
+            when(listingRepository.findById(100L))
+                    .thenReturn(Optional.of(listing));
+
+            assertThatThrownBy(() ->
+                    listingService.markAsSold(
+                            100L,
+                            null,
+                            2L
+                    )
+            )
                     .isInstanceOf(UnauthorizedException.class);
+
+            verify(listingRepository, never())
+                    .save(any(Listing.class));
         }
 
         @Test
         @DisplayName("TC-LST-009: Should reject if already sold")
         void shouldRejectIfAlreadySold() {
-            listing.setIsSold(true);
-            when(listingRepository.findById(100L)).thenReturn(Optional.of(listing));
 
-            assertThatThrownBy(() -> listingService.markAsSold(100L, null, 1L))
+            listing.setIsSold(true);
+
+            when(listingRepository.findById(100L))
+                    .thenReturn(Optional.of(listing));
+
+            assertThatThrownBy(() ->
+                    listingService.markAsSold(
+                            100L,
+                            null,
+                            1L
+                    )
+            )
                     .isInstanceOf(IllegalStateException.class)
-                    .hasMessageContaining("already sold");
+                    .hasMessageContaining(
+                            "already sold"
+                    );
+
+            verify(listingRepository, never())
+                    .save(any(Listing.class));
         }
     }
+
+    // ============================================================
+    // ARCHIVE LISTING
+    // ============================================================
 
     @Nested
     @DisplayName("archiveListing()")
@@ -201,74 +380,259 @@ class ListingServiceTest {
         @Test
         @DisplayName("TC-LST-010: Should archive listing")
         void shouldArchive() {
-            when(listingRepository.findById(100L)).thenReturn(Optional.of(listing));
 
-            listingService.archiveListing(100L, 1L);
+            when(listingRepository.findById(100L))
+                    .thenReturn(Optional.of(listing));
 
-            assertThat(listing.getStatus()).isEqualTo(ListingStatus.ARCHIVED);
-            verify(listingRepository).save(listing);
+            listingService.archiveListing(
+                    100L,
+                    1L
+            );
+
+            assertThat(listing.getStatus())
+                    .isEqualTo(ListingStatus.ARCHIVED);
+
+            verify(listingRepository)
+                    .save(listing);
         }
 
         @Test
-        @DisplayName("TC-LST-011: Should reject archive by non-owner")
+        @DisplayName(
+                "TC-LST-011: Should reject archive by non-owner"
+        )
         void shouldRejectNonOwner() {
-            when(listingRepository.findById(100L)).thenReturn(Optional.of(listing));
 
-            assertThatThrownBy(() -> listingService.archiveListing(100L, 2L))
+            when(listingRepository.findById(100L))
+                    .thenReturn(Optional.of(listing));
+
+            assertThatThrownBy(() ->
+                    listingService.archiveListing(
+                            100L,
+                            2L
+                    )
+            )
                     .isInstanceOf(UnauthorizedException.class);
+
+            verify(listingRepository, never())
+                    .save(any(Listing.class));
+        }
+
+        @Test
+        @DisplayName(
+                "TC-LST-012: Should reject archive of sold listing"
+        )
+        void shouldRejectSoldListing() {
+
+            listing.setIsSold(true);
+
+            when(listingRepository.findById(100L))
+                    .thenReturn(Optional.of(listing));
+
+            assertThatThrownBy(() ->
+                    listingService.archiveListing(
+                            100L,
+                            1L
+                    )
+            )
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining(
+                            "sold"
+                    );
+
+            verify(listingRepository, never())
+                    .save(any(Listing.class));
         }
     }
+
+    // ============================================================
+    // REACTIVATE LISTING
+    // ============================================================
 
     @Nested
     @DisplayName("reactivateListing()")
     class ReactivateListing {
 
         @Test
-        @DisplayName("TC-LST-012: Should reactivate archived listing")
+        @DisplayName(
+                "TC-LST-013: Should reactivate archived listing"
+        )
         void shouldReactivate() {
-            listing.setStatus(ListingStatus.ARCHIVED);
-            when(listingRepository.findById(100L)).thenReturn(Optional.of(listing));
-            when(listingRepository.save(any())).thenReturn(listing);
-            when(listingMapper.toResponse(listing)).thenReturn(listingResponse);
 
-            listingService.reactivateListing(100L, 1L);
+            listing.setStatus(
+                    ListingStatus.ARCHIVED
+            );
 
-            assertThat(listing.getStatus()).isEqualTo(ListingStatus.ACTIVE);
+            when(listingRepository.findById(100L))
+                    .thenReturn(Optional.of(listing));
+
+            when(listingRepository.save(any(Listing.class)))
+                    .thenReturn(listing);
+
+            when(listingMapper.toResponse(listing))
+                    .thenReturn(listingResponse);
+
+            ListingResponse result =
+                    listingService.reactivateListing(
+                            100L,
+                            1L
+                    );
+
+            assertThat(result)
+                    .isNotNull();
+
+            assertThat(listing.getStatus())
+                    .isEqualTo(ListingStatus.ACTIVE);
+
+            verify(listingRepository)
+                    .save(listing);
         }
 
         @Test
-        @DisplayName("TC-LST-013: Should reject reactivation of sold listing")
+        @DisplayName(
+                "TC-LST-014: Should reject reactivation of sold listing"
+        )
         void shouldRejectSoldReactivation() {
-            listing.setIsSold(true);
-            when(listingRepository.findById(100L)).thenReturn(Optional.of(listing));
 
-            assertThatThrownBy(() -> listingService.reactivateListing(100L, 1L))
+            listing.setStatus(
+                    ListingStatus.ARCHIVED
+            );
+
+            listing.setIsSold(true);
+
+            when(listingRepository.findById(100L))
+                    .thenReturn(Optional.of(listing));
+
+            assertThatThrownBy(() ->
+                    listingService.reactivateListing(
+                            100L,
+                            1L
+                    )
+            )
                     .isInstanceOf(IllegalStateException.class)
                     .hasMessageContaining("sold");
+
+            verify(listingRepository, never())
+                    .save(any(Listing.class));
+        }
+
+        @Test
+        @DisplayName(
+                "TC-LST-015: Should reject reactivation by non-owner"
+        )
+        void shouldRejectNonOwner() {
+
+            listing.setStatus(
+                    ListingStatus.ARCHIVED
+            );
+
+            when(listingRepository.findById(100L))
+                    .thenReturn(Optional.of(listing));
+
+            assertThatThrownBy(() ->
+                    listingService.reactivateListing(
+                            100L,
+                            2L
+                    )
+            )
+                    .isInstanceOf(UnauthorizedException.class);
+
+            verify(listingRepository, never())
+                    .save(any(Listing.class));
         }
     }
+
+    // ============================================================
+    // DELETE LISTING
+    // ============================================================
 
     @Nested
     @DisplayName("deleteListing()")
     class DeleteListing {
 
         @Test
-        @DisplayName("TC-LST-014: Should delete listing by owner")
-        void shouldDelete() {
-            when(listingRepository.findById(100L)).thenReturn(Optional.of(listing));
+        @DisplayName(
+                "TC-LST-016: Should soft delete listing by owner"
+        )
+        void shouldSoftDelete() {
 
-            listingService.deleteListing(100L, 1L);
+            when(listingRepository.findById(100L))
+                    .thenReturn(Optional.of(listing));
 
-            verify(listingRepository).delete(listing);
+            listingService.deleteListing(
+                    100L,
+                    1L
+            );
+
+            assertThat(listing.getStatus())
+                    .isEqualTo(ListingStatus.DELETED);
+
+            assertThat(listing.getDeletedAt())
+                    .isNotNull();
+
+            assertThat(listing.getDeletedBy())
+                    .isEqualTo(1L);
+
+            verify(listingRepository)
+                    .save(listing);
+
+            verify(listingRepository, never())
+                    .delete(any(Listing.class));
         }
 
         @Test
-        @DisplayName("TC-LST-015: Should reject delete by non-owner")
+        @DisplayName(
+                "TC-LST-017: Should reject delete by non-owner"
+        )
         void shouldRejectNonOwner() {
-            when(listingRepository.findById(100L)).thenReturn(Optional.of(listing));
 
-            assertThatThrownBy(() -> listingService.deleteListing(100L, 2L))
-                    .isInstanceOf(UnauthorizedException.class);
+            when(listingRepository.findById(100L))
+                    .thenReturn(Optional.of(listing));
+
+            assertThatThrownBy(() ->
+                    listingService.deleteListing(
+                            100L,
+                            2L
+                    )
+            )
+                    .isInstanceOf(UnauthorizedException.class)
+                    .hasMessageContaining(
+                            "only delete your own"
+                    );
+
+            verify(listingRepository, never())
+                    .save(any(Listing.class));
+
+            verify(listingRepository, never())
+                    .delete(any(Listing.class));
+        }
+
+        @Test
+        @DisplayName(
+                "TC-LST-018: Should reject deletion of sold listing"
+        )
+        void shouldRejectSoldListing() {
+
+            listing.setIsSold(true);
+
+            when(listingRepository.findById(100L))
+                    .thenReturn(Optional.of(listing));
+
+            assertThatThrownBy(() ->
+                    listingService.deleteListing(
+                            100L,
+                            1L
+                    )
+            )
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining(
+                            "Cannot delete a sold listing"
+                    );
+
+            verify(listingRepository, never())
+                    .save(any(Listing.class));
+
+            verify(listingRepository, never())
+                    .delete(any(Listing.class));
         }
     }
 }
