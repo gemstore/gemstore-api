@@ -45,6 +45,16 @@ public class JwtFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain chain) throws ServletException, IOException {
 
+        String correlationId =
+                request.getHeader("X-Correlation-ID");
+
+        log.info(
+                "Request: {} {} | Correlation ID: {}",
+                request.getMethod(),
+                request.getRequestURI(),
+                correlationId
+        );
+
         String requestURI = request.getRequestURI();
         log.debug("[JWT Filter] Processing: {} {}", request.getMethod(), requestURI);
 

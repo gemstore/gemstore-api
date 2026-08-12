@@ -1,0 +1,15 @@
+type: operation_policy_specification
+version: v4.7.0
+data:
+  category: Mediation
+  name: CorrelationIDManagement
+  version: v2
+  displayName: Correlation ID Management
+  description: "Preserves an existing X-Correlation-ID from the client or generates a unique correlation ID when one is not provided, then forwards it to the backend for end-to-end request tracing."
+  applicableFlows:
+   - request
+  supportedGateways:
+   - Synapse
+  supportedApiTypes:
+   - HTTP
+  policyAttributes: []

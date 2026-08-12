@@ -116,6 +116,9 @@ public class SecurityConfig {
                         // Admin
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
+                        // Health check
+                        .requestMatchers("/actuator/health").permitAll()
+
                         // Everything else
                         .anyRequest().authenticated()
                 )

@@ -1,0 +1,100 @@
+# Gem Store Listings API
+
+The Gem Store Listings API provides marketplace operations for gemstone listings.
+
+## Base Gateway URL
+
+https://localhost:8243/gemstore/1.0.0
+
+## Authentication
+
+Protected endpoints require a Gem Store JWT:
+
+Authorization: Bearer <JWT>
+
+The JWT is validated by the Spring Boot backend after being forwarded through WSO2 API Manager.
+
+## Public Endpoints
+
+GET /api/v1/listings
+
+GET /api/v1/listings/{id}
+
+GET /api/v1/listings/{id}/detail
+
+GET /api/v1/listings/search
+
+GET /api/v1/listings/seller/{sellerId}
+
+GET /api/v1/listings/public/{slug}
+
+## Protected Endpoints
+
+POST /api/v1/listings
+
+GET /api/v1/listings/my
+
+PUT /api/v1/listings/{id}
+
+PATCH /api/v1/listings/{id}
+
+DELETE /api/v1/listings/{id}
+
+POST /api/v1/listings/upload
+
+POST /api/v1/listings/{id}/sold
+
+POST /api/v1/listings/{id}/archive
+
+POST /api/v1/listings/{id}/reactivate
+
+## Pagination
+
+List endpoints support:
+
+page
+size
+
+Example:
+
+GET /api/v1/listings?page=0&size=20
+
+## Search
+
+Example:
+
+GET /api/v1/listings/search?query=sapphire&minPrice=1000&maxPrice=500000
+
+## Image Upload
+
+POST /api/v1/listings/upload
+
+Content-Type:
+multipart/form-data
+
+Field:
+file
+
+The request must include:
+
+Authorization: Bearer <JWT>
+
+## Common Responses
+
+200 OK
+
+201 Created
+
+400 Bad Request
+
+401 Unauthorized
+
+403 Forbidden
+
+404 Not Found
+
+409 Conflict
+
+429 Too Many Requests
+
+500 Internal Server Error
